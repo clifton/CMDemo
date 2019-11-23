@@ -27,6 +27,11 @@ void ACMCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+bool ACMCharacter::IsMoving()
+{
+	return GetVelocity().Size() > 0 || !GetLastMovementInputVector().IsZero();
+}
+
 void ACMCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

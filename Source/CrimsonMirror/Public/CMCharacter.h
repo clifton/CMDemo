@@ -31,6 +31,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	bool IsMoving();
+
 	virtual void Tick(float DeltaTime) override;
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystem; };
