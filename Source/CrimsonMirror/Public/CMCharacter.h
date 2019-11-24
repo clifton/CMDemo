@@ -6,6 +6,16 @@
 #include "CMCharacter.generated.h"
 
 
+UENUM(BlueprintType)
+enum class ECMMovementDirection : uint8
+{
+	Forward,
+	Backward,
+	Left,
+	Right,
+	Max UMETA(Hidden)
+};
+
 class USpringArmComponent;
 class UCameraComponent;
 class UAbilitySystemComponent;
@@ -30,9 +40,20 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	ECMMovementDirection GetMovementDirection();
+
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	bool IsMoving();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BlendMode")
+	ECMMovementDirection MovementDirection;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	static FVector RelativeVelocityNormalized(AActor* Actor);
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	static float ForwardToLateralVelocityRelativeWeight(AActor* Actor);
 
 	virtual void Tick(float DeltaTime) override;
 
