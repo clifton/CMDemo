@@ -61,7 +61,10 @@ void ACMPlayerCharacter::MoveRight(float Velocity)
 
 FRotator ACMPlayerCharacter::GetDesiredRotation()
 {
-	return GetControlRotation();
+	FRotator DesiredRotation = GetControlRotation();
+	DesiredRotation.Pitch = 0.f;
+	DesiredRotation.Roll = 0.f;
+	return DesiredRotation;
 }
 
 void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
