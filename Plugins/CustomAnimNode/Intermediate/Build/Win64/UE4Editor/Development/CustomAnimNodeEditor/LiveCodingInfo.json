@@ -1,0 +1,15 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.CustomAnimNodeEditor.cpp.obj": [
+			"AnimGraphNode_OrientationWarping.cpp.obj",
+			"AnimGraphNode_SpeedWarping.cpp.obj",
+			"CustomAnimNodeEditor.cpp.obj"
+		],
+		"Module.CustomAnimNodeEditor.gen.cpp.obj": [
+			"AnimGraphNode_OrientationWarping.gen.cpp.obj",
+			"AnimGraphNode_SpeedWarping.gen.cpp.obj",
+			"CustomAnimNodeEditor.init.gen.cpp.obj"
+		]
+	}
+}
