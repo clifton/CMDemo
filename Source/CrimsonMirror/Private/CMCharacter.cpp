@@ -96,7 +96,7 @@ FVector ACMCharacter::ExpectedStopLocation()
 	
 	UGameplayStatics::PredictProjectilePath(GetWorld(), PredictParams, PredictResult);
 	
-	if (DebugMovement)
+	if (IsDebugMovementEnabled())
 	{
 		DrawDebugSphere(GetWorld(), PredictResult.LastTraceDestination.Location, 30.f, 15, FColor::Red, false);
 	}

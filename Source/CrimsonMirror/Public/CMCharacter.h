@@ -28,6 +28,9 @@ class CRIMSONMIRROR_API ACMCharacter : public ACharacter, public IAbilitySystemI
 public:
 	static int32 DebugMovement;
 
+	UFUNCTION(BlueprintCallable)
+	bool IsDebugMovementEnabled() { return DebugMovement > 0; };
+
 	ACMCharacter();
 
 protected:
