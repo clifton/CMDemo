@@ -20,7 +20,9 @@ public class CrimsonMirror : ModuleRules
             new string[] {
                 "GameplayAbilities",
                 "GameplayTags",
-                "GameplayTasks"
+                "GameplayTasks",
+                "CustomAnimNode",
+                "CustomAnimNodeEditor"
             }
         );
 

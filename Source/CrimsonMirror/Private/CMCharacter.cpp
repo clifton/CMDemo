@@ -64,7 +64,7 @@ ECMMovementDirection ACMCharacter::GetMovementDirection()
 	if (!IsMoving()) return ECMMovementDirection::Forward;
 
 	FVector ActorVelocityNormal = RelativeVelocityNormalized(this);
-	if (ForwardToLateralVelocityRelativeWeight(this) > 0.4f)
+	if (ForwardToLateralVelocityRelativeWeight(this) > 0.45f)
 	{
 		return ActorVelocityNormal.Y >= 0.f ? ECMMovementDirection::Forward : ECMMovementDirection::Backward;
 	}

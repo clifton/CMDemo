@@ -9,6 +9,9 @@ public class CrimsonMirrorEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 
-		ExtraModuleNames.AddRange( new string[] { "CrimsonMirror" } );
+		ExtraModuleNames.AddRange( new string[] {
+			"CrimsonMirror",
+			"CustomAnimNodeEditor" 
+		} );
 	}
 }
