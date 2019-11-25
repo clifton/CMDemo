@@ -6,7 +6,15 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Components/CapsuleComponent.h"
 
+
+// console variables
+int32 ACMCharacter::DebugMovement = 0;
+FAutoConsoleVariableRef CVar_DebugMovement(
+	TEXT("CM.DebugMovement"), ACMCharacter::DebugMovement,
+	TEXT("Draw movement function debug geometry"),
+	ECVF_Cheat);
 
 ACMCharacter::ACMCharacter()
 {
@@ -29,6 +37,13 @@ ACMCharacter::ACMCharacter()
 void ACMCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UCharacterMovementComponent* MC = Cast<UCharacterMovementComponent>(GetMovementComponent());
+	if (MC->BrakingDecelerationWalking != 0.0f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Animation logic incompatible with BrakingDecelerationWalking, use gravity/friction instead"));
+		MC->BrakingDecelerationWalking = 0.0f;
+	}
 }
 
 bool ACMCharacter::IsMoving()
@@ -57,8 +72,6 @@ FVector ACMCharacter::RelativeVelocityNormalized(AActor* Actor)
 float ACMCharacter::ForwardToLateralVelocityRelativeWeight(AActor* Actor)
 {
 	FVector ActorVelocityNormalAbs = RelativeVelocityNormalized(Actor).GetAbs();
-	// return ActorVelocityNormalAbs.Rotation() / 90.f;
-	// float RelativeVelocityYaw = UKismetMathLibrary::MakeRotationFromAxes(ActorVelocityNormalAbs).Yaw;
 	return ActorVelocityNormalAbs.Rotation().Yaw / 90.f;
 }
 
@@ -67,50 +80,28 @@ float ACMCharacter::ForwardToLateralVelocityRelativeWeight(AActor* Actor)
 FVector ACMCharacter::ExpectedStopLocation()
 {
 	UCharacterMovementComponent* MC = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	GetWorld()->GetDeltaSeconds();
+	checkf(MC->BrakingDecelerationWalking == 0.f, TEXT("Animation logic incompatible with BrakingDecelerationWalking, use gravity/friction instead"))
 
-	// Small number break loop when velocity is less than this value
-	float Local_WorldDeltaSecond = UGameplayStatics::GetWorldDeltaSeconds(this);
+	FPredictProjectilePathResult PredictResult;
+	FPredictProjectilePathParams PredictParams;
 
-	float SmallVelocity = 10.f * FMath::Square(Local_WorldDeltaSecond);
+	PredictParams.OverrideGravityZ = MC->GetGravityZ();
+	PredictParams.LaunchVelocity = MC->Velocity;
+	PredictParams.StartLocation = GetActorLocation();
+	PredictParams.TraceChannel = ECollisionChannel::ECC_WorldStatic;
+	PredictParams.bTraceWithChannel = true;
+	PredictParams.bTraceWithCollision = true;
+	PredictParams.ProjectileRadius = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	PredictParams.ActorsToIgnore.Add(this);
 	
-	float Friction = FMath::Max(0.f, MC->bUseSeparateBrakingFriction ? MC->BrakingFriction : MC->GroundFriction * MC->BrakingFrictionFactor);
-
-	// Current velocity at current frame in unit/frame
-	FVector CurrentVelocityInFrame = MC->Velocity * Local_WorldDeltaSecond;
-
-	// Store velocity direction for later use
-	FVector CurrentVelocityDirection = MC->Velocity.GetSafeNormal2D();
-
-	// Current deacceleration at current frame in unit/fame^2
-	FVector CurrentDeaccelerationInFrame = (CurrentVelocityDirection * MC->BrakingDecelerationWalking) * FMath::Square(Local_WorldDeltaSecond);
-
-	// float variable use to store distance to targeted stop location
-	float StoppingDistance = 0.f;
-	int StopFrameCount = CurrentVelocityInFrame.Size() / CurrentDeaccelerationInFrame.Size();
-
-	// Do Stop calculation go through all frames and calculate stop distance in each frame and stack them
-	for (int i = 0; i <= StopFrameCount; i++)
+	UGameplayStatics::PredictProjectilePath(GetWorld(), PredictParams, PredictResult);
+	
+	if (DebugMovement)
 	{
-		//Update velocity
-		
-		CurrentVelocityInFrame -= CurrentDeaccelerationInFrame;
-
-		// if velocity in XY plane is small break loop for safety
-		if (CurrentVelocityInFrame.Size2D() <= SmallVelocity)
-		{
-			// UE_LOG(LogTemp, Warning, TEXT("Took %s steps"), *FString::FromInt(i));
-			break;
-		}
-
-		// Calculate distance travel in current frame and add to previous distance
-		StoppingDistance += CurrentVelocityInFrame.Size2D();
+		DrawDebugSphere(GetWorld(), PredictResult.LastTraceDestination.Location, 30.f, 15, FColor::Red, false);
 	}
 
-	FVector ExpectedLocation = GetActorLocation() + CurrentVelocityDirection * StoppingDistance;
-	// return stopping distance from player position in previous frame
-	// DrawDebugSphere(GetWorld(), ExpectedLocation, 30.f, 15, FColor::Red, false, 3.0f);
-	return ExpectedLocation;
+	return PredictResult.LastTraceDestination.Location;
 }
 
 ECMMovementDirection ACMCharacter::GetMovementDirection()

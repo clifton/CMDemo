@@ -26,6 +26,8 @@ class CRIMSONMIRROR_API ACMCharacter : public ACharacter, public IAbilitySystemI
 	GENERATED_BODY()
 
 public:
+	static int32 DebugMovement;
+
 	ACMCharacter();
 
 protected:
