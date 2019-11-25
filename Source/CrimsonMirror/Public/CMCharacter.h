@@ -55,6 +55,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	static float ForwardToLateralVelocityRelativeWeight(AActor* Actor);
 
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FVector ExpectedStopLocation();
+
 	virtual void Tick(float DeltaTime) override;
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystem; };
