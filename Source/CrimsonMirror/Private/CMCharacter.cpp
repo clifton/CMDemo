@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
+#include "Animation/AnimSequence.h"
 
 
 // console variables
@@ -46,6 +47,21 @@ void ACMCharacter::BeginPlay()
 	}
 }
 
+void ACMCharacter::GetMovementDirections(ECMMovementDirection& Primary, ECMMovementDirection& Secondary)
+{
+	FVector MovementNormal = RelativeVelocityNormalized(this);
+	Primary = GetMovementDirection();
+
+	if (Primary == ECMMovementDirection::Forward || Primary == ECMMovementDirection::Backward)
+	{
+		Secondary = MovementNormal.X >= 0.f ? ECMMovementDirection::Right : ECMMovementDirection::Left;
+	}
+	else
+	{
+		Secondary = MovementNormal.Y >= 0.f ? ECMMovementDirection::Forward : ECMMovementDirection::Backward;
+	}
+}
+
 bool ACMCharacter::IsMoving()
 {
 	return GetVelocity().Size() > 0 || !GetLastMovementInputVector().IsZero();
@@ -73,6 +89,51 @@ float ACMCharacter::ForwardToLateralVelocityRelativeWeight(AActor* Actor)
 {
 	FVector ActorVelocityNormalAbs = RelativeVelocityNormalized(Actor).GetAbs();
 	return ActorVelocityNormalAbs.Rotation().Yaw / 90.f;
+}
+
+float ACMCharacter::GetRelativeYawFromDirection(ECMMovementDirection Direction)
+{
+	const float RelativeYaw = RelativeRotation.Yaw;
+	switch (Direction) {
+	case ECMMovementDirection::Forward:
+		return RelativeYaw;
+	case ECMMovementDirection::Backward:
+		return RelativeYaw - FMath::Sign(RelativeYaw) * 180.f;
+	case ECMMovementDirection::Left:
+		return RelativeYaw + 90.f;
+	default: // Right
+		return RelativeYaw - 90.f;
+	}
+}
+
+float ACMCharacter::GetStartTimeFromDistanceCurve(UAnimSequence* Sequence)
+{
+	float CurveTime = 0.f;
+	float DistanceLookup = (ExpectedStopLocation() - GetActorLocation()).Size();
+	float CurveDistance = TNumericLimits<float>::Max();
+	FRawCurveTracks CurvesOfAnim = Sequence->GetCurveData();
+	TArray<FFloatCurve> Curves = CurvesOfAnim.FloatCurves;
+	for (FFloatCurve& Curve : Curves)
+	{
+		if (Curve.Name.DisplayName == "DistanceCurve")
+		{
+			TArray<float> OutTimes, OutValues;
+			Curve.GetKeys(OutTimes, OutValues);
+			for (int32 i = 0; i < OutTimes.Num(); ++i)
+			{
+				float DistanceCandidate = FMath::Abs(FMath::Abs(OutValues[i]) - DistanceLookup);
+				if (DistanceCandidate < CurveDistance)
+				{
+					CurveDistance = DistanceCandidate;
+					CurveTime = OutTimes[i];
+				}
+			}
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT(
+		"Distance: %s -- CurveDistance: %s -- CurveTime: %s"),
+		*FString::SanitizeFloat(DistanceLookup), *FString::SanitizeFloat(CurveDistance), *FString::SanitizeFloat(CurveTime));
+	return CurveTime;
 }
 
 // calculate expected stop location when player stops accelerating
@@ -123,4 +184,5 @@ void ACMCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MovementDirection = GetMovementDirection();
+	RelativeRotation = UKismetMathLibrary::NormalizedDeltaRotator(GetVelocity().Rotation(), GetActorRotation());
 }
