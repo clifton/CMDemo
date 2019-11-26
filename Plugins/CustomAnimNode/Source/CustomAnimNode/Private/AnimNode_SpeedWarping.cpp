@@ -191,6 +191,8 @@ void FAnimNode_SpeedWarping::EvaluateSkeletalControl_AnyThread(FComponentSpacePo
 			if (PelvisAdjustmentInterp.Dampen > CutOffDampingValue)
 			{
 				float const SafetyScale = CutOffDampingValue / PelvisAdjustmentInterp.Dampen;
+				check(FMath::IsFinite(PelvisAdjustmentInterp.Dampen));
+				check(FMath::IsFinite(CutOffDampingValue));
 				BoneVelocity += SafetyScale * (Acceleration * TimeStep);
 			}
 			else
@@ -205,6 +207,13 @@ void FAnimNode_SpeedWarping::EvaluateSkeletalControl_AnyThread(FComponentSpacePo
 
 			// Update velocity to reflect post processing done to bone location.
 			BoneVelocity = (BoneLocation - OldBoneLocation) / TimeStep;
+
+			check(TimeStep != 0.f);
+			check(FMath::IsFinite(TimeStep));
+			check(FMath::IsFinite(RemainingTime));
+			check(FMath::IsFinite(RemainingTime));
+			check(!DeltaMove.ContainsNaN());
+			check(!Acceleration.ContainsNaN());
 
 			check(!BoneLocation.ContainsNaN());
 			check(!BoneVelocity.ContainsNaN());
