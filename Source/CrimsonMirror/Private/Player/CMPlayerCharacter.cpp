@@ -30,7 +30,7 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// should rotate player pawn
-	if (IsMoving())
+	if (GetCharacterMovement()->GetCurrentAcceleration().Size() > 0)
 	{
 		float InterpSpeed = 8.f;
 		FRotator CurrentYaw = FRotator(0.f, GetActorRotation().Yaw, 0.f);

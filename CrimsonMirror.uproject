@@ -42,6 +42,10 @@
 			"Name": "CustomAnimNode",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/8901af6d589b40b68d763b44c9ced66c"
+		},
+		{
+			"Name": "AnimDistanceMatching",
+			"Enabled": true
 		}
 	]
 }

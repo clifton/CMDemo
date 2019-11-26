@@ -39,10 +39,10 @@ void ACMCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	UCharacterMovementComponent* MC = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	if (MC->BrakingDecelerationWalking != 0.0f)
+	if (MC->BrakingDecelerationWalking > 500.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Animation logic incompatible with BrakingDecelerationWalking, use gravity/friction instead"));
-		MC->BrakingDecelerationWalking = 0.0f;
+		UE_LOG(LogTemp, Warning, TEXT("Animation logic incompatible with high BrakingDecelerationWalking, use gravity/friction instead"));
+		MC->BrakingDecelerationWalking = 200.f;
 	}
 }
 
@@ -80,7 +80,7 @@ float ACMCharacter::ForwardToLateralVelocityRelativeWeight(AActor* Actor)
 FVector ACMCharacter::ExpectedStopLocation()
 {
 	UCharacterMovementComponent* MC = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	checkf(MC->BrakingDecelerationWalking == 0.f, TEXT("Animation logic incompatible with BrakingDecelerationWalking, use gravity/friction instead"))
+	checkf(MC->BrakingDecelerationWalking <= 500.f, TEXT("Animation logic incompatible with high BrakingDecelerationWalking, use gravity/friction instead"))
 
 	FPredictProjectilePathResult PredictResult;
 	FPredictProjectilePathParams PredictParams;
