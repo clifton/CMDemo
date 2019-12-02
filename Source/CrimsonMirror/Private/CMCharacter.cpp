@@ -179,6 +179,34 @@ ECMMovementDirection ACMCharacter::GetMovementDirection()
 	}
 }
 
+float ACMCharacter::GetFloorSlope()
+{
+	const FVector FloorTraceEnd = GetActorLocation() + FRotator(-70.f, GetActorRotation().Yaw, 0.f).Vector() * 100.f;
+
+	// UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray<AActor*>& ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult& OutHit, bool bIgnoreSelf, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime
+
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+
+	const UCapsuleComponent* MyCapsuleComp = GetCapsuleComponent();
+
+	FHitResult HitResult;
+	const float TraceSphereRadius = 30.f;
+	bool bDidFindFloorAhead = UKismetSystemLibrary::SphereTraceSingle(
+		GetWorld(), GetActorLocation(), FloorTraceEnd, TraceSphereRadius,
+		UEngineTypes::ConvertToTraceType(ECC_WorldStatic), false, ActorsToIgnore,
+		DebugMovement > 0 ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None,
+		HitResult, true);
+
+	const FVector FloorLocation = GetActorLocation() - FVector(0.f, 0.f, MyCapsuleComp->GetScaledCapsuleHalfHeight());
+
+	if (!bDidFindFloorAhead) return 0.f;
+
+	const float ErrorConstant = 5.5545f;
+
+	return UKismetMathLibrary::GetDirectionUnitVector(FloorLocation, HitResult.ImpactPoint).Rotation().Pitch + ErrorConstant;
+}
+
 void ACMCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

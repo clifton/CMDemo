@@ -55,6 +55,9 @@ public:
 	FRotator RelativeRotation;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
+	float GetFloorSlope();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void GetMovementDirections(ECMMovementDirection& Primary, ECMMovementDirection& Secondary);
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
