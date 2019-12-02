@@ -173,7 +173,7 @@ void FAnimNode_SpeedWarping::EvaluateSkeletalControl_AnyThread(FComponentSpacePo
 		BoneVelocity = FVector::ZeroVector;
 		//		GEngine->AddOnScreenDebugMessage(17, 10, FColor::Green, FString::Printf(TEXT("OriginIKSize: %0.5f"), EachIK.OriginLocation.Size()));
 
-		while (RemainingTime > TimeStep)
+		while (TimeStep > 0.f && RemainingTime > TimeStep)
 		{
 			// Calculate error vector.
 			FVector const IKDirection = (EachIK.ActualLocation - EachIK.LimbRootLocation).GetSafeNormal();
