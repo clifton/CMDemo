@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Abilities/CMCharacterAttributeSet.h"
 #include "CMCharacter.generated.h"
 
 
@@ -19,6 +20,7 @@ enum class ECMMovementDirection : uint8
 class USpringArmComponent;
 class UCameraComponent;
 class UAbilitySystemComponent;
+class UCMCharacterAttributeSet;
 
 UCLASS()
 class CRIMSONMIRROR_API ACMCharacter : public ACharacter, public IAbilitySystemInterface
@@ -51,6 +53,18 @@ public:
 
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	FRotator CharacterRotation;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void OnTakeDamage(ACMCharacter* WhoAttackedMe, float DamageAmount, bool IsCritical);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void OnInflictDamage(ACMCharacter* WhoWasDamaged, float DamageAmount, bool IsCritical);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void CalculateUpdatedDamage(float OriginalDamage, const UCMCharacterAttributeSet* SourceAttributes, FGameplayTagContainer EffectTags, float& NewDamage, bool& IsCritical);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void OnDeath(ACMCharacter* WhoKilledMe);
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	FRotator GetRelativeRotation();

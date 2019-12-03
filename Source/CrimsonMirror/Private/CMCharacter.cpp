@@ -34,6 +34,9 @@ ACMCharacter::ACMCharacter()
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
+	AbilitySystem->SetIsReplicated(true);
+
+	CreateDefaultSubobject<UCMCharacterAttributeSet>(TEXT("AttributeSet"));
 
 	SetReplicates(true);
 }
