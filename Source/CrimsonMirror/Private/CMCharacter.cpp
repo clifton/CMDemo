@@ -52,7 +52,7 @@ void ACMCharacter::BeginPlay()
 
 void ACMCharacter::GetMovementDirections(ECMMovementDirection& Primary, ECMMovementDirection& Secondary)
 {
-	FVector MovementNormal = RelativeVelocityNormalized(this);
+	FVector MovementNormal = RelativeVelocityNormalized();
 	Primary = GetMovementDirection();
 
 	if (Primary == ECMMovementDirection::Forward || Primary == ECMMovementDirection::Backward)
@@ -72,15 +72,15 @@ bool ACMCharacter::IsMoving()
 
 // static -- returns relative velocity vector
 // bounds X: left/right (-1, 1) Y: forward/back (-1, 1) Z (0)
-FVector ACMCharacter::RelativeVelocityNormalized(AActor* Actor)
+FVector ACMCharacter::RelativeVelocityNormalized()
 {
-	if (Actor == nullptr || Actor->GetVelocity().Size() < 0.001)
+	if (GetVelocity().Size() < 0.001)
 	{
 		return FVector::ZeroVector;
 	}
 
 	FRotator RelativeRotation = UKismetMathLibrary::NormalizedDeltaRotator(
-		Actor->GetActorRotation(), Actor->GetVelocity().Rotation());
+		GetActorRotation(), GetVelocity().Rotation());
 
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(RelativeRotation);
 	FVector RightVector = UKismetMathLibrary::GetRightVector(RelativeRotation);
@@ -88,9 +88,9 @@ FVector ACMCharacter::RelativeVelocityNormalized(AActor* Actor)
 	return FVector(RightVector.X, ForwardVector.X, 0.f);
 }
 
-float ACMCharacter::ForwardToLateralVelocityRelativeWeight(AActor* Actor)
+float ACMCharacter::ForwardToLateralVelocityRelativeWeight()
 {
-	FVector ActorVelocityNormalAbs = RelativeVelocityNormalized(Actor).GetAbs();
+	FVector ActorVelocityNormalAbs = RelativeVelocityNormalized().GetAbs();
 	return ActorVelocityNormalAbs.Rotation().Yaw / 90.f;
 }
 
@@ -177,8 +177,8 @@ ECMMovementDirection ACMCharacter::GetMovementDirection()
 {
 	if (!IsMoving()) return ECMMovementDirection::Forward;
 
-	FVector ActorVelocityNormal = RelativeVelocityNormalized(this);
-	if (ForwardToLateralVelocityRelativeWeight(this) > 0.45f)
+	FVector ActorVelocityNormal = RelativeVelocityNormalized();
+	if (ForwardToLateralVelocityRelativeWeight() > 0.45f)
 	{
 		return ActorVelocityNormal.Y >= 0.f ? ECMMovementDirection::Forward : ECMMovementDirection::Backward;
 	}

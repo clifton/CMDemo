@@ -62,10 +62,10 @@ public:
 	bool IsMoving();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	static FVector RelativeVelocityNormalized(AActor* Actor);
+	FVector RelativeVelocityNormalized();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	static float ForwardToLateralVelocityRelativeWeight(AActor* Actor);
+	float ForwardToLateralVelocityRelativeWeight();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	float GetRelativeYawFromDirection(ECMMovementDirection Direction);
