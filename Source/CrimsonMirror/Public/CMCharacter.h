@@ -45,14 +45,12 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	ECMMovementDirection GetMovementDirection();
-
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BlendMode")
-	ECMMovementDirection MovementDirection;
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FRotator GetRelativeRotation();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	FRotator RelativeRotation;
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	ECMMovementDirection GetMovementDirection();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	float GetFloorSlope();

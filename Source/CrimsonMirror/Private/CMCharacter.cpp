@@ -8,6 +8,7 @@
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimSequence.h"
+#include "Net/UnrealNetwork.h"
 
 
 // console variables
@@ -33,6 +34,8 @@ ACMCharacter::ACMCharacter()
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
+
+	SetReplicates(true);
 }
 
 void ACMCharacter::BeginPlay()
@@ -93,7 +96,7 @@ float ACMCharacter::ForwardToLateralVelocityRelativeWeight(AActor* Actor)
 
 float ACMCharacter::GetRelativeYawFromDirection(ECMMovementDirection Direction)
 {
-	const float RelativeYaw = RelativeRotation.Yaw;
+	const float RelativeYaw = GetRelativeRotation().Yaw;
 	switch (Direction) {
 	case ECMMovementDirection::Forward:
 		return RelativeYaw;
@@ -165,6 +168,11 @@ FVector ACMCharacter::ExpectedStopLocation()
 	return PredictResult.LastTraceDestination.Location;
 }
 
+FRotator ACMCharacter::GetRelativeRotation()
+{
+	return UKismetMathLibrary::NormalizedDeltaRotator(GetVelocity().Rotation(), GetActorRotation());
+}
+
 ECMMovementDirection ACMCharacter::GetMovementDirection()
 {
 	if (!IsMoving()) return ECMMovementDirection::Forward;
@@ -210,7 +218,4 @@ float ACMCharacter::GetFloorSlope()
 void ACMCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	MovementDirection = GetMovementDirection();
-	RelativeRotation = UKismetMathLibrary::NormalizedDeltaRotator(GetVelocity().Rotation(), GetActorRotation());
 }
