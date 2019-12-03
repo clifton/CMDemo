@@ -2,6 +2,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 ACMPlayerCharacter::ACMPlayerCharacter()
@@ -27,6 +28,18 @@ ACMPlayerCharacter::ACMPlayerCharacter()
 void ACMPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// should rotate player pawn
+	if (GetCharacterMovement()->GetCurrentAcceleration().Size() > 0)
+	{
+		float InterpSpeed = 8.f;
+		FRotator CurrentYaw = FRotator(0.f, GetActorRotation().Yaw, 0.f);
+		FRotator DesiredYaw = FRotator(0.f, GetDesiredRotation().Yaw, 0.f);
+		FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);
+		RotateTo.Pitch = GetActorRotation().Pitch;
+		RotateTo.Roll = GetActorRotation().Roll;
+		SetActorRotation(RotateTo);
+	}
 }
 
 void ACMPlayerCharacter::BeginPlay()
@@ -36,16 +49,22 @@ void ACMPlayerCharacter::BeginPlay()
 
 void ACMPlayerCharacter::MoveForward(float Velocity)
 {
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	AddMovementInput(CameraComp->GetForwardVector() * Velocity);
-	GetCharacterMovement()->bOrientRotationToMovement = false;
+	FVector TargetForwardVector = UKismetMathLibrary::GetForwardVector(GetDesiredRotation());
+	AddMovementInput(TargetForwardVector * Velocity);
 }
 
 void ACMPlayerCharacter::MoveRight(float Velocity)
 {
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	AddMovementInput(CameraComp->GetRightVector() * Velocity);
-	GetCharacterMovement()->bOrientRotationToMovement = false;
+	FVector TargetRightVector = UKismetMathLibrary::GetRightVector(GetDesiredRotation());
+	AddMovementInput(TargetRightVector * Velocity);
+}
+
+FRotator ACMPlayerCharacter::GetDesiredRotation()
+{
+	FRotator DesiredRotation = GetControlRotation();
+	DesiredRotation.Pitch = 0.f;
+	DesiredRotation.Roll = 0.f;
+	return DesiredRotation;
 }
 
 void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -59,4 +78,6 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 	PlayerInputComponent->BindAxis("LookUp", this, &ACMPlayerCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::AddControllerYawInput);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
 }

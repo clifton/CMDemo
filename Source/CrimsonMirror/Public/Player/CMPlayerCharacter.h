@@ -24,4 +24,6 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FRotator GetDesiredRotation();
 };
