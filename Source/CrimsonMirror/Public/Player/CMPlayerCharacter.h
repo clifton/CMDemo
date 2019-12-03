@@ -22,6 +22,9 @@ protected:
 	void MoveRight(float Velocity);
 
 public:
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	FVector CharacterAcceleration;
+
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")

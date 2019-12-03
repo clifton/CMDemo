@@ -3,6 +3,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 
 ACMPlayerCharacter::ACMPlayerCharacter()
@@ -35,7 +36,10 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 	// should rotate player pawn
 	if (Role >= ROLE_AutonomousProxy)
 	{
-		if (GetCharacterMovement()->GetCurrentAcceleration().Size() > 0)
+		// is this worth it?
+		CharacterAcceleration = GetCharacterMovement()->GetCurrentAcceleration();
+
+		if (CharacterAcceleration.Size() > 0)
 		{
 			float InterpSpeed = 8.f;
 			FRotator CurrentYaw = FRotator(0.f, CharacterRotation.Yaw, 0.f);
@@ -86,4 +90,11 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
+}
+
+void ACMPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(ACMPlayerCharacter, CharacterAcceleration, COND_SkipOwner);
 }
