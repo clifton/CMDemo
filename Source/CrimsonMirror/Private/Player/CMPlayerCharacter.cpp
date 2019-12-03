@@ -33,15 +33,18 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// should rotate player pawn
-	if (GetCharacterMovement()->GetCurrentAcceleration().Size() > 0)
+	if (Role >= ROLE_AutonomousProxy)
 	{
-		float InterpSpeed = 8.f;
-		FRotator CurrentYaw = FRotator(0.f, GetActorRotation().Yaw, 0.f);
-		FRotator DesiredYaw = FRotator(0.f, GetDesiredRotation().Yaw, 0.f);
-		FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);
-		RotateTo.Pitch = GetActorRotation().Pitch;
-		RotateTo.Roll = GetActorRotation().Roll;
-		SetActorRotation(RotateTo);
+		if (GetCharacterMovement()->GetCurrentAcceleration().Size() > 0)
+		{
+			float InterpSpeed = 8.f;
+			FRotator CurrentYaw = FRotator(0.f, CharacterRotation.Yaw, 0.f);
+			FRotator DesiredYaw = FRotator(0.f, GetDesiredRotation().Yaw, 0.f);
+			FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);
+			RotateTo.Pitch = CharacterRotation.Pitch;
+			RotateTo.Roll = CharacterRotation.Roll;
+			SetActorRotation(RotateTo);
+		}
 	}
 }
 

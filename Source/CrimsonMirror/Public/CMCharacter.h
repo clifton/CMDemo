@@ -46,6 +46,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	FVector VelocityVector;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	FRotator CharacterRotation;
+
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	FRotator GetRelativeRotation();
 
@@ -79,4 +85,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystem; };
+
+private:
+	FVector GetVelocity() const override { return Super::GetVelocity(); };
 };
