@@ -25,6 +25,9 @@ public:
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	FVector CharacterAcceleration;
 
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	FRotator CharacterAimRotation;
+
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")

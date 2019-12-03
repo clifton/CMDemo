@@ -38,6 +38,7 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 	{
 		// is this worth it?
 		CharacterAcceleration = GetCharacterMovement()->GetCurrentAcceleration();
+		CharacterAimRotation = GetControlRotation();
 
 		if (CharacterAcceleration.Size() > 0)
 		{
@@ -71,7 +72,7 @@ void ACMPlayerCharacter::MoveRight(float Velocity)
 
 FRotator ACMPlayerCharacter::GetDesiredRotation()
 {
-	FRotator DesiredRotation = GetControlRotation();
+	FRotator DesiredRotation = CharacterAimRotation;
 	DesiredRotation.Pitch = 0.f;
 	DesiredRotation.Roll = 0.f;
 	return DesiredRotation;
@@ -97,4 +98,5 @@ void ACMPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(ACMPlayerCharacter, CharacterAcceleration, COND_SkipOwner);
+	DOREPLIFETIME_CONDITION(ACMPlayerCharacter, CharacterAimRotation, COND_SkipOwner);
 }
