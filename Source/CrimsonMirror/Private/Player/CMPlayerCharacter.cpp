@@ -27,6 +27,10 @@ ACMPlayerCharacter::ACMPlayerCharacter()
 
 	NetUpdateFrequency = 66.0f;
 	MinNetUpdateFrequency = 33.0f;
+
+	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ShortComponents;
+	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
+	ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
 }
 
 void ACMPlayerCharacter::Tick(float DeltaTime)
@@ -43,6 +47,7 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 		if (CharacterAcceleration.Size() > 0)
 		{
 			float InterpSpeed = 8.f;
+			const FRotator CharacterRotation = GetActorRotation();
 			FRotator CurrentYaw = FRotator(0.f, CharacterRotation.Yaw, 0.f);
 			FRotator DesiredYaw = FRotator(0.f, GetDesiredRotation().Yaw, 0.f);
 			FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);

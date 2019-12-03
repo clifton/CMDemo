@@ -48,12 +48,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	FVector VelocityVector;
-
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	FRotator CharacterRotation;
-
 	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
 	void OnTakeDamage(ACMCharacter* WhoAttackedMe, float DamageAmount, bool IsCritical);
 	

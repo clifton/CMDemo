@@ -39,6 +39,10 @@ ACMCharacter::ACMCharacter()
 	CreateDefaultSubobject<UCMCharacterAttributeSet>(TEXT("AttributeSet"));
 
 	SetReplicates(true);
+
+	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
+	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
+	ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundOneDecimal;
 }
 
 void ACMCharacter::BeginPlay()
@@ -70,20 +74,20 @@ void ACMCharacter::GetMovementDirections(ECMMovementDirection& Primary, ECMMovem
 
 bool ACMCharacter::IsMoving()
 {
-	return VelocityVector.Size() > 0 || !GetLastMovementInputVector().IsZero();
+	return GetVelocity().Size() > 0 || !GetLastMovementInputVector().IsZero();
 }
 
 // static -- returns relative velocity vector
 // bounds X: left/right (-1, 1) Y: forward/back (-1, 1) Z (0)
 FVector ACMCharacter::RelativeVelocityNormalized()
 {
-	if (VelocityVector.Size() < 0.001)
+	if (GetVelocity().Size() < 0.001)
 	{
 		return FVector::ZeroVector;
 	}
 
 	FRotator RelativeRotation = UKismetMathLibrary::NormalizedDeltaRotator(
-		CharacterRotation, VelocityVector.Rotation());
+		GetActorRotation(), GetVelocity().Rotation());
 
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(RelativeRotation);
 	FVector RightVector = UKismetMathLibrary::GetRightVector(RelativeRotation);
@@ -173,7 +177,7 @@ FVector ACMCharacter::ExpectedStopLocation()
 
 FRotator ACMCharacter::GetRelativeRotation()
 {
-	return UKismetMathLibrary::NormalizedDeltaRotator(VelocityVector.Rotation(), CharacterRotation);
+	return UKismetMathLibrary::NormalizedDeltaRotator(GetVelocity().Rotation(), GetActorRotation());
 }
 
 ECMMovementDirection ACMCharacter::GetMovementDirection()
@@ -192,7 +196,7 @@ ECMMovementDirection ACMCharacter::GetMovementDirection()
 
 float ACMCharacter::GetFloorSlope()
 {
-	const FVector FloorTraceEnd = GetActorLocation() + FRotator(-70.f, CharacterRotation.Yaw, 0.f).Vector() * 100.f;
+	const FVector FloorTraceEnd = GetActorLocation() + FRotator(-70.f, GetActorRotation().Yaw, 0.f).Vector() * 100.f;
 
 	// UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray<AActor*>& ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult& OutHit, bool bIgnoreSelf, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime
 
@@ -221,18 +225,4 @@ float ACMCharacter::GetFloorSlope()
 void ACMCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (Role >= ROLE_AutonomousProxy)
-	{
-		VelocityVector = GetVelocity();
-		CharacterRotation = GetActorRotation();
-	}
-}
-
-void ACMCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME_CONDITION(ACMCharacter, VelocityVector, COND_SkipOwner);
-	DOREPLIFETIME_CONDITION(ACMCharacter, CharacterRotation, COND_SkipOwner);
 }
