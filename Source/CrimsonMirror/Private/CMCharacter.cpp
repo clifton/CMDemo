@@ -39,6 +39,7 @@ ACMCharacter::ACMCharacter()
 	CreateDefaultSubobject<UCMCharacterAttributeSet>(TEXT("AttributeSet"));
 
 	SetReplicates(true);
+	bReplicateMovement = true;
 
 	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
 	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
