@@ -26,12 +26,14 @@ public:
 	virtual void Activate() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static UCMAbilityTask_WaitForOverlap* CMWaitForOverlap(UGameplayAbility* OwningAbility, TArray<UPrimitiveComponent*> CollisionPrimitives, bool bOnlyUniqueHits = true);
+	static UCMAbilityTask_WaitForOverlap* CMWaitForOverlap(UGameplayAbility* OwningAbility, TArray<UPrimitiveComponent*> CollisionPrimitives);
 
 private:
 	TArray<UPrimitiveComponent*> CollisionPrimitives;
 
-	bool bOnlyUniqueHits;
+	TSet<AActor*> HitActors;
 
 	virtual void OnDestroy(bool AbilityEnded) override;
+
+	void HandleHit(FHitResult HitResult);
 };

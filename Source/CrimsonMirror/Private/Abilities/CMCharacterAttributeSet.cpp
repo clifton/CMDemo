@@ -52,6 +52,9 @@ bool UCMCharacterAttributeSet::PreGameplayEffectExecute(struct FGameplayEffectMo
 					{
 						AttackingCharacter->OnInflictDamage(DamagedCharacter, NewMagnitude, IsCritical);
 					}
+
+					UE_LOG(LogTemp, Warning, TEXT("%s did %s damage to %s"),
+						*WhoAttackedUsLast->GetName(), *FString::SanitizeFloat(NewMagnitude), *DamagedCharacter->GetName());
 				}
 			}
 		}
@@ -66,13 +69,8 @@ void UCMCharacterAttributeSet::PostGameplayEffectExecute(const struct FGameplayE
 	static UProperty* HealingProperty = FindFieldChecked<UProperty>(UCMCharacterAttributeSet::StaticClass(), GET_MEMBER_NAME_CHECKED(UCMCharacterAttributeSet, Healing));
 	UProperty* ModifiedProperty = Data.EvaluatedData.Attribute.GetUProperty();
 
-	//Data.EffectSpec.CapturedTargetTags
-
-
-	// What property was modified?
 	if (DamageProperty == ModifiedProperty)
 	{
-		// Treat damage as minus health
 		SetHealth(FMath::Clamp(GetHealth() - Damage.GetCurrentValue(), 0.f, GetMaxHealth()));
 		Damage = 0.f;
 	}
