@@ -141,9 +141,10 @@ float ACMCharacter::GetStartTimeFromDistanceCurve(UAnimSequence* Sequence)
 			}
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT(
-		"Distance: %s -- CurveDistance: %s -- CurveTime: %s"),
-		*FString::SanitizeFloat(DistanceLookup), *FString::SanitizeFloat(CurveDistance), *FString::SanitizeFloat(CurveTime));
+	// animation debugging
+// 	UE_LOG(LogTemp, Warning, TEXT(
+// 		"Distance: %s -- CurveDistance: %s -- CurveTime: %s"),
+// 		*FString::SanitizeFloat(DistanceLookup), *FString::SanitizeFloat(CurveDistance), *FString::SanitizeFloat(CurveTime));
 	return CurveTime;
 }
 
@@ -174,6 +175,14 @@ FVector ACMCharacter::ExpectedStopLocation()
 	}
 
 	return PredictResult.LastTraceDestination.Location;
+}
+
+void ACMCharacter::GrantAbility(TSubclassOf<class UGameplayAbility> NewAbility, int AbilityLevel)
+{
+	if (AbilitySystem && HasAuthority() && NewAbility)
+	{
+		AbilitySystem->GiveAbility(FGameplayAbilitySpec(NewAbility.GetDefaultObject(), 1));
+	}
 }
 
 FRotator ACMCharacter::GetRelativeRotation()

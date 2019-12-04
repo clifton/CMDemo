@@ -61,6 +61,8 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 void ACMPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AbilitySystem->InitAbilityActorInfo(this, this);
 }
 
 void ACMPlayerCharacter::MoveForward(float Velocity)
@@ -96,6 +98,10 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
+
+	DECLARE_DELEGATE_OneParam(FAbilitySelectDelegate, EAbilityMap);
+	PlayerInputComponent->BindAction<FAbilitySelectDelegate>("PrimaryAttack", IE_Pressed, this, &ACMPlayerCharacter::BeginAbility, EAbilityMap::PrimaryAttack);
+	PlayerInputComponent->BindAction<FAbilitySelectDelegate>("PrimaryAttack", IE_Released, this, &ACMPlayerCharacter::EndAbility, EAbilityMap::PrimaryAttack);
 }
 
 void ACMPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

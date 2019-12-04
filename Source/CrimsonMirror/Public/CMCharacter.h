@@ -60,6 +60,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
 	void OnDeath(ACMCharacter* WhoKilledMe);
 
+	UFUNCTION(BlueprintCallable, Category = Combat)
+	void GrantAbility(TSubclassOf<class UGameplayAbility> NewAbility, int AbilityLevel = 1);
+	
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	FRotator GetRelativeRotation();
 
