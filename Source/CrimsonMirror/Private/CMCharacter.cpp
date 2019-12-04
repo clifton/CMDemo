@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimSequence.h"
 #include "Net/UnrealNetwork.h"
+#include "CrimsonMirror.h"
 
 
 // console variables
@@ -16,6 +17,12 @@ int32 ACMCharacter::DebugMovement = 0;
 FAutoConsoleVariableRef CVar_DebugMovement(
 	TEXT("CM.DebugMovement"), ACMCharacter::DebugMovement,
 	TEXT("Draw movement function debug geometry"),
+	ECVF_Cheat);
+
+int32 ACMCharacter::DebugAttacks = 0;
+FAutoConsoleVariableRef CVar_DebugAttacks(
+	TEXT("CM.DebugAttacks"), ACMCharacter::DebugAttacks,
+	TEXT("Draw attack debug geometry"),
 	ECVF_Cheat);
 
 ACMCharacter::ACMCharacter()
@@ -235,4 +242,63 @@ float ACMCharacter::GetFloorSlope()
 void ACMCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+// pawn capsule sweep. maxhitdistance by default is a multiple of actor's capsule radius
+TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, float MaxHitDistance /*= -1.f*/)
+{
+	// default hit distance 
+	float MeleeCapsuleRadius = MaxHitDistance < 0.f ? GetCapsuleComponent()->GetScaledCapsuleRadius() * 6 : MaxHitDistance;
+	AngleFromFront = AngleFromFront < 0.f ? 180.f : AngleFromFront;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	TArray<FHitResult> HitResults;
+
+	EDrawDebugTrace::Type DebugTraceType = EDrawDebugTrace::None;
+
+	if (DebugAttacks > 0)
+	{
+		DebugTraceType = EDrawDebugTrace::ForDuration;
+
+		// draw forward arrow
+		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+		if (AngleFromFront < 180.f) {
+			// left arrow
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, -AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+			// right arrow
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+		}
+	}
+
+	bool bDidHit = UKismetSystemLibrary::CapsuleTraceMulti(
+		GetWorld(), GetActorLocation(), GetActorLocation() - FVector(0.f, 0.f, 0.01f), MeleeCapsuleRadius, GetCapsuleComponent()->GetScaledCapsuleHalfHeight(),
+		UEngineTypes::ConvertToTraceType(COLLISION_DAMAGE), false,  ActorsToIgnore, DebugTraceType, HitResults, true);
+
+	TSet<ACMCharacter*> HitCharacters;
+	TArray<FHitResult> MeleeHitResults;
+
+	for (FHitResult HitResult : HitResults)
+	{
+		if (HitResult.GetActor() == nullptr) continue;
+		ACMCharacter* CharacterHit = Cast<ACMCharacter>(HitResult.GetActor());
+		if (CharacterHit && !HitCharacters.Contains(CharacterHit))
+		{
+			float ImpactAngle = UKismetMathLibrary::NormalizedDeltaRotator((HitResult.ImpactPoint - GetActorLocation()).GetSafeNormal2D().Rotation(), GetActorRotation()).Yaw;
+			if (FMath::Abs(ImpactAngle) <= AngleFromFront)
+			{
+				HitCharacters.Add(CharacterHit);
+				HitResult.Distance = (GetActorLocation() - HitResult.ImpactPoint).Size();
+				MeleeHitResults.Add(HitResult);
+			}
+
+			if (DebugAttacks > 0)
+			{
+				UE_LOG(LogTemp, Log, TEXT("%s: MeleeHitTrace: %s hit %s at distance %s and angle %s!"),
+					*FString(Role == ROLE_Authority ? "Server" : "Client"),
+					*this->GetName(), *CharacterHit->GetName(), *FString::SanitizeFloat(HitResult.Distance), *FString::SanitizeFloat(ImpactAngle));
+			}
+		}
+	}
+
+	return MeleeHitResults;
 }

@@ -10,6 +10,9 @@ UCMAbilityTask_WaitForOverlap::UCMAbilityTask_WaitForOverlap(const FObjectInitia
 UCMAbilityTask_WaitForOverlap* UCMAbilityTask_WaitForOverlap::CMWaitForOverlap(
 	UGameplayAbility* OwningAbility, TArray<UPrimitiveComponent*> CollisionPrimitives)
 {
+	// Not working: causes desync between client and server
+	check(false);
+
 	UCMAbilityTask_WaitForOverlap* MyTask = NewAbilityTask<UCMAbilityTask_WaitForOverlap>(OwningAbility);
 	MyTask->CollisionPrimitives = CollisionPrimitives;
 	return MyTask;

@@ -29,6 +29,7 @@ class CRIMSONMIRROR_API ACMCharacter : public ACharacter, public IAbilitySystemI
 
 public:
 	static int32 DebugMovement;
+	static int32 DebugAttacks;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDebugMovementEnabled() { return DebugMovement > 0; };
@@ -96,6 +97,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystem; };
+
+	UFUNCTION(BlueprintCallable, Category = "Traces")
+	TArray<FHitResult> MeleeHitTrace(float AngleFromFront = 90.f, float MaxHitDistance = -1.f);
 
 private:
 	FVector GetVelocity() const override { return Super::GetVelocity(); };
