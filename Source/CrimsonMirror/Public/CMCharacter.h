@@ -177,7 +177,7 @@ protected:
 	FGameplayTag DeadTag;
 	FGameplayTag EffectRemoveOnDeathTag;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CMCharacter")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CrimsonMirror|CMCharacter")
 	FText CharacterName;
 
 	// Death Animation
@@ -185,16 +185,16 @@ protected:
 	UAnimMontage* DeathMontage;
 
 	// Default abilities for this Character. These will be removed on Character death and regiven if Character respawns.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CrimsonMirror|Abilities")
 	TArray<TSubclassOf<class UCMGameplayAbility>> CharacterAbilities;
 
 	// Default attributes for a character for initializing on spawn/respawn.
 	// This is an instant GE that overrides the values for attributes that get reset on spawn/respawn.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CrimsonMirror|Abilities")
 	TSubclassOf<class UGameplayEffect> DefaultAttributes;
 
 	// These effects are only applied one time on startup
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CrimsonMirror|Abilities")
 	TArray<TSubclassOf<class UGameplayEffect>> StartupEffects;
 
 	// Grant abilities on the Server. The Ability Specs will be replicated to the owning client.

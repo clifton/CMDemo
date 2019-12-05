@@ -12,6 +12,7 @@
 #include "CMPlayerController.h"
 #include "AI/CMPlayerAIController.h"
 #include "CMGameModeBase.h"
+#include "CrimsonMirror.h"
 
 
 ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectInitializer) :
@@ -102,8 +103,6 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// AbilitySystem->BindAbilityActivationToInputComponent(PlayerInputComponent, );
-
  	PlayerInputComponent->BindAxis("MoveForward", this, &ACMPlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveBackward", this, &ACMPlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveLeft", this, &ACMPlayerCharacter::MoveRight);
@@ -114,11 +113,13 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::Turn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACMPlayerCharacter::TurnRate);
 
-	// PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
 
-// 	AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
-// 		FGameplayAbilityInputBinds(FString("ConfirmTarget"), FString("CancelTarget"), FString("ECMAbilityInputID"),
-// 		static_cast<int32>(ECMAbilityInputID::Confirm), static_cast<int32>(ECMAbilityInputID::Cancel)));
+	check(AbilitySystemComponent->IsValidLowLevel());
+
+	AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
+		FGameplayAbilityInputBinds(FString("Confirm"), FString("Cancel"), FString("ECMAbilityInputID"),
+		static_cast<int32>(ECMAbilityInputID::Confirm), static_cast<int32>(ECMAbilityInputID::Cancel)));
 }
 
 // Server only
