@@ -287,7 +287,10 @@ TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, 
 			if (FMath::Abs(ImpactAngle) <= AngleFromFront)
 			{
 				HitCharacters.Add(CharacterHit);
+				// These values are used downstream by gameplay cues
 				HitResult.Distance = (GetActorLocation() - HitResult.ImpactPoint).Size();
+				HitResult.Location = HitResult.ImpactPoint;
+				HitResult.Normal = HitResult.ImpactNormal;
 				MeleeHitResults.Add(HitResult);
 			}
 
