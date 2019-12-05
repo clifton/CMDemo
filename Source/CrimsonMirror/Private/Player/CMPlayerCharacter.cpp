@@ -10,8 +10,8 @@
 #include "WidgetComponent.h"
 #include "CMPlayerState.h"
 #include "CMPlayerController.h"
+#include "AI/CMPlayerAIController.h"
 #include "CMGameModeBase.h"
-// @TODO #include "AI/CMPlayerAIController.h"
 
 
 ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectInitializer) :
@@ -42,7 +42,8 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	// Makes sure that the animations play on the Server so that we can use bone and socket transforms
 	// to do things like spawning projectiles and other FX.
 	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
-	// TODO: do we need this?
+
+	// Do we still need this?
 	// 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	// 	GetMesh()->SetCollisionProfileName(FName("NoCollision"));
 
@@ -59,8 +60,7 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find UIPlayerStatusBarClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));
 	}
 
-	// @TODO - make ACMPlayerAIController
-	// AIControllerClass = ACMPlayerAIController::StaticClass();
+	AIControllerClass = ACMPlayerAIController::StaticClass();
 
 	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
 }
@@ -114,11 +114,11 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::Turn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACMPlayerCharacter::TurnRate);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
+	// PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
 
-	AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
-		FGameplayAbilityInputBinds(FString("ConfirmTarget"), FString("CancelTarget"), FString("EGDAbilityInputID"),
-		static_cast<int32>(ECMAbilityInputID::Confirm), static_cast<int32>(ECMAbilityInputID::Cancel)));
+// 	AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
+// 		FGameplayAbilityInputBinds(FString("ConfirmTarget"), FString("CancelTarget"), FString("ECMAbilityInputID"),
+// 		static_cast<int32>(ECMAbilityInputID::Confirm), static_cast<int32>(ECMAbilityInputID::Cancel)));
 }
 
 // Server only

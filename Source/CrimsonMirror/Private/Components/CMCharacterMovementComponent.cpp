@@ -25,7 +25,7 @@ float UCMCharacterMovementComponent::GetMaxSpeed() const
 		return 0.0f;
 	}
 
-	if (Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun"))))
+	if (Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.Stun"))))
 	{
 		return 0.0f;
 	}

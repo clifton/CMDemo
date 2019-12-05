@@ -27,16 +27,27 @@ enum class ECMHitReactDirection : uint8
 UENUM(BlueprintType)
 enum class ECMAbilityInputID : uint8
 {
-	None			UMETA(DisplayName = "None"),		// 0 None
-	Confirm			UMETA(DisplayName = "Confirm"),		// 1 Confirm
-	Cancel			UMETA(DisplayName = "Cancel"),		// 2 Cancel
-	Ability1		UMETA(DisplayName = "Ability1"),	// 3 LMB
-	Ability2		UMETA(DisplayName = "Ability2"),	// 4 RMB
-	Ability3		UMETA(DisplayName = "Ability3"),	// 5 Q
-	Ability4		UMETA(DisplayName = "Ability4"),	// 6 E
-	Ability5		UMETA(DisplayName = "Ability5"),	// 7 R
-	Sprint			UMETA(DisplayName = "Sprint"),		// 8 Sprint
-	Jump			UMETA(DisplayName = "Jump")			// 9 Jump
+	None			UMETA(DisplayName = "None"),		// 0	None
+	Confirm			UMETA(DisplayName = "Confirm"),		// 1	Confirm
+	Cancel			UMETA(DisplayName = "Cancel"),		// 2	Cancel
+	AbilityLMB		UMETA(DisplayName = "AbilityLMB"),	// 3	LMB
+	AbilityRMB		UMETA(DisplayName = "AbilityRMB"),	// 4	RMB
+	AbilityQ		UMETA(DisplayName = "AbilityQ"),	// 5	Q
+	AbilityE		UMETA(DisplayName = "AbilityE"),	// 6	E
+	AbilityF		UMETA(DisplayName = "AbilityF"),	// 7	F
+	AbilityR		UMETA(DisplayName = "AbilityR"),	// 8	R
+	Ability1		UMETA(DisplayName = "Ability1"),	// 9	1
+	Ability2		UMETA(DisplayName = "Ability2"),	// 10	2
+	Ability3		UMETA(DisplayName = "Ability3"),	// 11	3
+	Ability4		UMETA(DisplayName = "Ability4"),	// 12	4
+	Ability5		UMETA(DisplayName = "Ability5"),	// 13	5
+	Ability6		UMETA(DisplayName = "Ability6"),	// 14	6
+	Ability7		UMETA(DisplayName = "Ability7"),	// 15	7
+	Ability8		UMETA(DisplayName = "Ability8"),	// 16	8
+	Ability9		UMETA(DisplayName = "Ability9"),	// 17	9
+	Ability0		UMETA(DisplayName = "Ability0"),	// 18	0
+	Sprint			UMETA(DisplayName = "Sprint"),		// 19	Sprint
+	Jump			UMETA(DisplayName = "Jump")			// 20	Jump
 };
 
 UENUM(BlueprintType)
