@@ -5,15 +5,24 @@
 #include "CMGameModeBase.generated.h"
 
 
-UCLASS()
-class CRIMSONMIRROR_API ACMGameModeBase : public AGameModeBase
+UCLASS(minimalapi)
+class ACMGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
-protected:
-
 public:
 	ACMGameModeBase();
 
-	virtual void StartPlay() override;
+	void PlayerDied(AController* Controller);
+
+protected:
+	float RespawnDelay;
+
+	TSubclassOf<class ACMPlayerCharacter> PlayerCharacterClass;
+
+	AActor* EnemySpawnPoint;
+
+	virtual void BeginPlay() override;
+
+	void RespawnPlayer(AController* Controller);
 };

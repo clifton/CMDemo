@@ -11,7 +11,9 @@
 			"AdditionalDependencies": [
 				"Engine",
 				"CustomAnimNode",
-				"GameplayAbilities"
+				"GameplayAbilities",
+				"UMG",
+				"AIModule"
 			]
 		}
 	],

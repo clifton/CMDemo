@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimSequence.h"
 #include "Net/UnrealNetwork.h"
+#include "CMCharacterMovementComponent.h"
 #include "CrimsonMirror.h"
 
 
@@ -25,9 +26,13 @@ FAutoConsoleVariableRef CVar_DebugAttacks(
 	TEXT("Draw attack debug geometry"),
 	ECVF_Cheat);
 
-ACMCharacter::ACMCharacter()
+ACMCharacter::ACMCharacter(const class FObjectInitializer& ObjectInitializer) :
+	Super(ObjectInitializer.SetDefaultSubobjectClass<UCMCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -40,18 +45,350 @@ ACMCharacter::ACMCharacter()
 	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
-	AbilitySystem->SetIsReplicated(true);
+	// use alternate implementation
+	// AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
+	// AbilitySystemComponent.Get()->SetIsReplicated(true);
 
 	CreateDefaultSubobject<UCMCharacterAttributeSet>(TEXT("AttributeSet"));
 
 	SetReplicates(true);
 	bReplicateMovement = true;
-
+	bAlwaysRelevant = true;
 	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
 	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
 	ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundOneDecimal;
+
+	// Cache tags
+	HitDirectionFrontTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Front"));
+	HitDirectionBackTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Back"));
+	HitDirectionRightTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Right"));
+	HitDirectionLeftTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Left"));
+	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+	EffectRemoveOnDeathTag = FGameplayTag::RequestGameplayTag(FName("Effect.RemoveOnDeath"));
 }
+
+// BEGIN template functions
+
+UAbilitySystemComponent* ACMCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent.Get();
+}
+
+bool ACMCharacter::IsAlive() const
+{
+	return GetHealth() > 0.0f;
+}
+
+int32 ACMCharacter::GetAbilityLevel(ECMAbilityInputID AbilityID) const
+{
+	return 1;
+}
+
+void ACMCharacter::RemoveCharacterAbilities()
+{
+	if (Role != ROLE_Authority || !AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
+	{
+		return;
+	}
+
+	// Remove any abilities added from a previous call. This checks to make sure the ability is in the startup 'CharacterAbilities' array.
+	TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
+	for (const FGameplayAbilitySpec& Spec : AbilitySystemComponent->GetActivatableAbilities())
+	{
+		if ((Spec.SourceObject == this) && CharacterAbilities.Contains(Spec.Ability->GetClass()))
+		{
+			AbilitiesToRemove.Add(Spec.Handle);
+		}
+	}
+
+	// Do in two passes so the removal happens after we have the full list
+	for (int32 i = 0; i < AbilitiesToRemove.Num(); i++)
+	{
+		AbilitySystemComponent->ClearAbility(AbilitiesToRemove[i]);
+	}
+
+	AbilitySystemComponent->CharacterAbilitiesGiven = false;
+}
+
+ECMHitReactDirection ACMCharacter::GetHitReactDirection(const FVector& ImpactPoint)
+{
+	const FVector& ActorLocation = GetActorLocation();
+	// PointPlaneDist is super cheap - 1 vector subtraction, 1 dot product.
+	float DistanceToFrontBackPlane = FVector::PointPlaneDist(ImpactPoint, ActorLocation, GetActorRightVector());
+	float DistanceToRightLeftPlane = FVector::PointPlaneDist(ImpactPoint, ActorLocation, GetActorForwardVector());
+
+
+	if (FMath::Abs(DistanceToFrontBackPlane) <= FMath::Abs(DistanceToRightLeftPlane))
+	{
+		// Determine if Front or Back
+
+		// Can see if it's left or right of Left/Right plane which would determine Front or Back
+		if (DistanceToRightLeftPlane >= 0)
+		{
+			return ECMHitReactDirection::Front;
+		}
+		else
+		{
+			return ECMHitReactDirection::Back;
+		}
+	}
+	else
+	{
+		// Determine if Right or Left
+
+		if (DistanceToFrontBackPlane >= 0)
+		{
+			return ECMHitReactDirection::Right;
+		}
+		else
+		{
+			return ECMHitReactDirection::Left;
+		}
+	}
+
+	return ECMHitReactDirection::Front;
+}
+
+void ACMCharacter::PlayHitReact_Implementation(FGameplayTag HitDirection, AActor* DamageCauser)
+{
+	if (IsAlive())
+	{
+		if (HitDirection == HitDirectionLeftTag)
+		{
+			ShowHitReact.Broadcast(ECMHitReactDirection::Left);
+		}
+		else if (HitDirection == HitDirectionFrontTag)
+		{
+			ShowHitReact.Broadcast(ECMHitReactDirection::Front);
+		}
+		else if (HitDirection == HitDirectionRightTag)
+		{
+			ShowHitReact.Broadcast(ECMHitReactDirection::Right);
+		}
+		else if (HitDirection == HitDirectionBackTag)
+		{
+			ShowHitReact.Broadcast(ECMHitReactDirection::Back);
+		}
+	}
+}
+
+
+bool ACMCharacter::PlayHitReact_Validate(FGameplayTag HitDirection, AActor* DamageCauser)
+{
+	return true;
+}
+
+float ACMCharacter::GetHealth() const
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		return CharacterAttributeSet->GetHealth();
+	}
+
+	return 0.0f;
+}
+
+float ACMCharacter::GetMaxHealth() const
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		return CharacterAttributeSet->GetMaxHealth();
+	}
+
+	return 0.0f;
+}
+
+float ACMCharacter::GetMana() const
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		return CharacterAttributeSet->GetMana();
+	}
+
+	return 0.0f;
+}
+
+float ACMCharacter::GetMaxMana() const
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		return CharacterAttributeSet->GetMaxMana();
+	}
+
+	return 0.0f;
+}
+
+float ACMCharacter::GetStamina() const
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		return CharacterAttributeSet->GetStamina();
+	}
+
+	return 0.0f;
+}
+
+float ACMCharacter::GetMaxStamina() const
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		return CharacterAttributeSet->GetMaxStamina();
+	}
+
+	return 0.0f;
+}
+
+float ACMCharacter::GetMoveSpeed() const
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		CharacterAttributeSet->GetMoveSpeed();
+	}
+
+	return 0.0f;
+}
+
+float ACMCharacter::GetMoveSpeedBaseValue() const
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		return CharacterAttributeSet->GetMoveSpeedAttribute().GetGameplayAttributeData(CharacterAttributeSet.Get())->GetBaseValue();
+	}
+
+	return 0.0f;
+}
+
+int32 ACMCharacter::GetCharacterLevel() const
+{
+	return 1;
+}
+
+// Run on Server and all clients
+void ACMCharacter::Die()
+{
+	// Only runs on Server
+	RemoveCharacterAbilities();
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->GravityScale = 0;
+	GetCharacterMovement()->Velocity = FVector(0);
+
+	OnCharacterDied.Broadcast(this);
+
+	if (AbilitySystemComponent.IsValid())
+	{
+		AbilitySystemComponent->CancelAllAbilities();
+
+		FGameplayTagContainer EffectTagsToRemove;
+		EffectTagsToRemove.AddTag(EffectRemoveOnDeathTag);
+		int32 NumEffectsRemoved = AbilitySystemComponent->RemoveActiveEffectsWithTags(EffectTagsToRemove);
+
+		AbilitySystemComponent->AddLooseGameplayTag(DeadTag);
+	}
+
+	if (DeathMontage)
+	{
+		PlayAnimMontage(DeathMontage);
+	}
+	else
+	{
+		FinishDying();
+	}
+}
+
+void ACMCharacter::FinishDying()
+{
+	Destroy();
+}
+
+void ACMCharacter::AddCharacterAbilities()
+{
+	// Grant abilities, but only on the server	
+	if (Role != ROLE_Authority || !AbilitySystemComponent.IsValid() || AbilitySystemComponent->CharacterAbilitiesGiven)
+	{
+		return;
+	}
+
+	for (TSubclassOf<UCMGameplayAbility>& StartupAbility : CharacterAbilities)
+	{
+		AbilitySystemComponent->GiveAbility(
+			FGameplayAbilitySpec(StartupAbility, GetAbilityLevel(StartupAbility.GetDefaultObject()->AbilityID), static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID), this));
+	}
+
+	AbilitySystemComponent->CharacterAbilitiesGiven = true;
+}
+
+void ACMCharacter::InitializeAttributes()
+{
+	if (!AbilitySystemComponent.IsValid())
+	{
+		return;
+	}
+
+	if (!DefaultAttributes)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s() Missing DefaultAttributes for %s. Please fill in the character's Blueprint."), TEXT(__FUNCTION__), *GetName());
+		return;
+	}
+
+	// Can run on Server and Client
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, GetCharacterLevel(), EffectContext);
+	if (NewHandle.IsValid())
+	{
+		FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent.Get());
+	}
+}
+
+void ACMCharacter::AddStartupEffects()
+{
+	if (Role != ROLE_Authority || !AbilitySystemComponent.IsValid() || AbilitySystemComponent->StartupEffectsApplied)
+	{
+		return;
+	}
+
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	for (TSubclassOf<UGameplayEffect> GameplayEffect : StartupEffects)
+	{
+		FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, GetCharacterLevel(), EffectContext);
+		if (NewHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent.Get());
+		}
+	}
+
+	AbilitySystemComponent->StartupEffectsApplied = true;
+}
+
+void ACMCharacter::SetHealth(float Health)
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		CharacterAttributeSet->SetHealth(Health);
+	}
+}
+
+void ACMCharacter::SetMana(float Mana)
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		CharacterAttributeSet->SetMana(Mana);
+	}
+}
+
+void ACMCharacter::SetStamina(float Stamina)
+{
+	if (CharacterAttributeSet.IsValid())
+	{
+		CharacterAttributeSet->SetStamina(Stamina);
+	}
+}
+
+// END template functions
 
 void ACMCharacter::BeginPlay()
 {
@@ -182,14 +519,6 @@ FVector ACMCharacter::ExpectedStopLocation()
 	}
 
 	return PredictResult.LastTraceDestination.Location;
-}
-
-void ACMCharacter::GrantAbility(TSubclassOf<class UGameplayAbility> NewAbility, int AbilityLevel)
-{
-	if (AbilitySystem && HasAuthority() && NewAbility)
-	{
-		AbilitySystem->GiveAbility(FGameplayAbilitySpec(NewAbility.GetDefaultObject(), 1));
-	}
 }
 
 FRotator ACMCharacter::GetRelativeRotation()

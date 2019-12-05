@@ -12,7 +12,6 @@ FAnimNode_SpeedWarping::FAnimNode_SpeedWarping() :
 	RemainingTime(0.f),
 	BoneLocation(FVector::ZeroVector),
 	BoneVelocity(FVector::ZeroVector),
-	//TODO check if this is useful.
 	OwnerVelocity(FVector::ZeroVector)
 {
 }
