@@ -3,6 +3,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 
 ACMPlayerCharacter::ACMPlayerCharacter()
@@ -23,6 +24,13 @@ ACMPlayerCharacter::ACMPlayerCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	NetUpdateFrequency = 66.0f;
+	MinNetUpdateFrequency = 33.0f;
+
+	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ShortComponents;
+	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
+	ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
 }
 
 void ACMPlayerCharacter::Tick(float DeltaTime)
@@ -30,21 +38,31 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// should rotate player pawn
-	if (GetCharacterMovement()->GetCurrentAcceleration().Size() > 0)
+	if (Role >= ROLE_AutonomousProxy)
 	{
-		float InterpSpeed = 8.f;
-		FRotator CurrentYaw = FRotator(0.f, GetActorRotation().Yaw, 0.f);
-		FRotator DesiredYaw = FRotator(0.f, GetDesiredRotation().Yaw, 0.f);
-		FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);
-		RotateTo.Pitch = GetActorRotation().Pitch;
-		RotateTo.Roll = GetActorRotation().Roll;
-		SetActorRotation(RotateTo);
+		// is this worth it?
+		CharacterAcceleration = GetCharacterMovement()->GetCurrentAcceleration();
+		CharacterAimRotation = GetControlRotation();
+
+		if (CharacterAcceleration.Size() > 0)
+		{
+			float InterpSpeed = 8.f;
+			const FRotator CharacterRotation = GetActorRotation();
+			FRotator CurrentYaw = FRotator(0.f, CharacterRotation.Yaw, 0.f);
+			FRotator DesiredYaw = FRotator(0.f, GetDesiredRotation().Yaw, 0.f);
+			FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);
+			RotateTo.Pitch = CharacterRotation.Pitch;
+			RotateTo.Roll = CharacterRotation.Roll;
+			SetActorRotation(RotateTo);
+		}
 	}
 }
 
 void ACMPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AbilitySystem->InitAbilityActorInfo(this, this);
 }
 
 void ACMPlayerCharacter::MoveForward(float Velocity)
@@ -61,7 +79,7 @@ void ACMPlayerCharacter::MoveRight(float Velocity)
 
 FRotator ACMPlayerCharacter::GetDesiredRotation()
 {
-	FRotator DesiredRotation = GetControlRotation();
+	FRotator DesiredRotation = CharacterAimRotation;
 	DesiredRotation.Pitch = 0.f;
 	DesiredRotation.Roll = 0.f;
 	return DesiredRotation;
@@ -80,4 +98,16 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::AddControllerYawInput);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
+
+	DECLARE_DELEGATE_OneParam(FAbilitySelectDelegate, EAbilityMap);
+	PlayerInputComponent->BindAction<FAbilitySelectDelegate>("PrimaryAttack", IE_Pressed, this, &ACMPlayerCharacter::BeginAbility, EAbilityMap::PrimaryAttack);
+	PlayerInputComponent->BindAction<FAbilitySelectDelegate>("PrimaryAttack", IE_Released, this, &ACMPlayerCharacter::EndAbility, EAbilityMap::PrimaryAttack);
+}
+
+void ACMPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(ACMPlayerCharacter, CharacterAcceleration, COND_SkipOwner);
+	DOREPLIFETIME_CONDITION(ACMPlayerCharacter, CharacterAimRotation, COND_SkipOwner);
 }

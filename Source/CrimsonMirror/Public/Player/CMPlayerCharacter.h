@@ -5,6 +5,13 @@
 #include "CMPlayerCharacter.generated.h"
 
 
+UENUM(BlueprintType)
+enum class EAbilityMap : uint8
+{
+	PrimaryAttack,
+	EAbilityMap_MAX
+};
+
 UCLASS()
 class CRIMSONMIRROR_API ACMPlayerCharacter : public ACMCharacter
 {
@@ -22,6 +29,18 @@ protected:
 	void MoveRight(float Velocity);
 
 public:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ability")
+	void BeginAbility(EAbilityMap AbilityType);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Ability")
+	void EndAbility(EAbilityMap AbilityType);
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	FVector CharacterAcceleration;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	FRotator CharacterAimRotation;
+
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")

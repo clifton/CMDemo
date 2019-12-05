@@ -67,9 +67,11 @@ void FAnimMode_OrientationWarping::Evaluate_AnyThread(FPoseContext & Output)
 			const FQuat MeshSpaceDeltaQuat = MeshToComponentQuat.Inverse() * DeltaQuat * MeshToComponentQuat;
 			// Apply rotation to IK root bone.
 			FCompactPoseBoneIndex RotateBoneIndex = IKFootRootBone.GetCompactPoseIndex(BoneContainer);
-			Output.Pose[RotateBoneIndex].SetRotation(Output.Pose[RotateBoneIndex].GetRotation() * MeshSpaceDeltaQuat);
-			Output.Pose[RotateBoneIndex].NormalizeRotation();
-
+			if (RotateBoneIndex < Output.Pose.GetNumBones())
+			{
+				Output.Pose[RotateBoneIndex].SetRotation(Output.Pose[RotateBoneIndex].GetRotation() * MeshSpaceDeltaQuat);
+				Output.Pose[RotateBoneIndex].NormalizeRotation();
+			}
 
 			// Do the same things like IK foot root bone to pelvis, but in the reversed orientation.
 			FCompactPoseBoneIndex PelvisBoneIndex(1);
@@ -93,8 +95,11 @@ void FAnimMode_OrientationWarping::Evaluate_AnyThread(FPoseContext & Output)
 						const FRotator SpineDeltaRotation((-PelvisDeltaRotation.Pitch / SpineBones.Num()), (-PelvisDeltaRotation.Yaw / SpineBones.Num()), (-PelvisDeltaRotation.Roll / SpineBones.Num()));
 						const FQuat SpineDeltaQuat(SpineDeltaRotation);
 						const FQuat MeshSpaceSpineDeltaQuat = SpineBoneTM.GetRotation().Inverse() * SpineDeltaQuat * SpineBoneTM.GetRotation();
-						Output.Pose[SpineBoneIndex].ConcatenateRotation(MeshSpaceSpineDeltaQuat);
-						Output.Pose[SpineBoneIndex].NormalizeRotation();
+						if (SpineBoneIndex < Output.Pose.GetNumBones())
+						{
+							Output.Pose[SpineBoneIndex].ConcatenateRotation(MeshSpaceSpineDeltaQuat);
+							Output.Pose[SpineBoneIndex].NormalizeRotation();
+						}
 						//GEngine->AddOnScreenDebugMessage((i + 2), 10, FColor::Yellow, (FString::Printf(TEXT(" TargetID: %d, TargetName: %s"), SpineBones[i].Bone.GetCompactPoseIndex((BoneContainer)).GetInt(), *SpineBones[i].Bone.BoneName.ToString())));
 					}
 				}

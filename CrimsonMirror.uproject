@@ -10,7 +10,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"CustomAnimNode"
+				"CustomAnimNode",
+				"GameplayAbilities"
 			]
 		}
 	],
@@ -45,6 +46,10 @@
 		},
 		{
 			"Name": "AnimDistanceMatching",
+			"Enabled": true
+		},
+		{
+			"Name": "Niagara",
 			"Enabled": true
 		}
 	]

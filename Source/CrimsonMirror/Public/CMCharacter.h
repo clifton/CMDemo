@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Abilities/CMCharacterAttributeSet.h"
 #include "CMCharacter.generated.h"
 
 
@@ -19,6 +20,7 @@ enum class ECMMovementDirection : uint8
 class USpringArmComponent;
 class UCameraComponent;
 class UAbilitySystemComponent;
+class UCMCharacterAttributeSet;
 
 UCLASS()
 class CRIMSONMIRROR_API ACMCharacter : public ACharacter, public IAbilitySystemInterface
@@ -27,6 +29,7 @@ class CRIMSONMIRROR_API ACMCharacter : public ACharacter, public IAbilitySystemI
 
 public:
 	static int32 DebugMovement;
+	static int32 DebugAttacks;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDebugMovementEnabled() { return DebugMovement > 0; };
@@ -45,14 +48,27 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	ECMMovementDirection GetMovementDirection();
-
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BlendMode")
-	ECMMovementDirection MovementDirection;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void OnTakeDamage(ACMCharacter* WhoAttackedMe, float DamageAmount, bool IsCritical);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void OnInflictDamage(ACMCharacter* WhoWasDamaged, float DamageAmount, bool IsCritical);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	FRotator RelativeRotation;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void CalculateUpdatedDamage(float OriginalDamage, const UCMCharacterAttributeSet* SourceAttributes, FGameplayTagContainer EffectTags, float& NewDamage, bool& IsCritical);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Combat")
+	void OnDeath(ACMCharacter* WhoKilledMe);
+
+	UFUNCTION(BlueprintCallable, Category = Combat)
+	void GrantAbility(TSubclassOf<class UGameplayAbility> NewAbility, int AbilityLevel = 1);
+	
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FRotator GetRelativeRotation();
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	ECMMovementDirection GetMovementDirection();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	float GetFloorSlope();
@@ -64,10 +80,10 @@ public:
 	bool IsMoving();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	static FVector RelativeVelocityNormalized(AActor* Actor);
+	FVector RelativeVelocityNormalized();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	static float ForwardToLateralVelocityRelativeWeight(AActor* Actor);
+	float ForwardToLateralVelocityRelativeWeight();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	float GetRelativeYawFromDirection(ECMMovementDirection Direction);
@@ -81,4 +97,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystem; };
+
+	UFUNCTION(BlueprintCallable, Category = "Traces")
+	TArray<FHitResult> MeleeHitTrace(float AngleFromFront = 90.f, float MaxHitDistance = -1.f);
+
+private:
+	FVector GetVelocity() const override { return Super::GetVelocity(); };
 };

@@ -8,6 +8,8 @@
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimSequence.h"
+#include "Net/UnrealNetwork.h"
+#include "CrimsonMirror.h"
 
 
 // console variables
@@ -15,6 +17,12 @@ int32 ACMCharacter::DebugMovement = 0;
 FAutoConsoleVariableRef CVar_DebugMovement(
 	TEXT("CM.DebugMovement"), ACMCharacter::DebugMovement,
 	TEXT("Draw movement function debug geometry"),
+	ECVF_Cheat);
+
+int32 ACMCharacter::DebugAttacks = 0;
+FAutoConsoleVariableRef CVar_DebugAttacks(
+	TEXT("CM.DebugAttacks"), ACMCharacter::DebugAttacks,
+	TEXT("Draw attack debug geometry"),
 	ECVF_Cheat);
 
 ACMCharacter::ACMCharacter()
@@ -33,6 +41,16 @@ ACMCharacter::ACMCharacter()
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
+	AbilitySystem->SetIsReplicated(true);
+
+	CreateDefaultSubobject<UCMCharacterAttributeSet>(TEXT("AttributeSet"));
+
+	SetReplicates(true);
+	bReplicateMovement = true;
+
+	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
+	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
+	ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundOneDecimal;
 }
 
 void ACMCharacter::BeginPlay()
@@ -49,7 +67,7 @@ void ACMCharacter::BeginPlay()
 
 void ACMCharacter::GetMovementDirections(ECMMovementDirection& Primary, ECMMovementDirection& Secondary)
 {
-	FVector MovementNormal = RelativeVelocityNormalized(this);
+	FVector MovementNormal = RelativeVelocityNormalized();
 	Primary = GetMovementDirection();
 
 	if (Primary == ECMMovementDirection::Forward || Primary == ECMMovementDirection::Backward)
@@ -69,15 +87,15 @@ bool ACMCharacter::IsMoving()
 
 // static -- returns relative velocity vector
 // bounds X: left/right (-1, 1) Y: forward/back (-1, 1) Z (0)
-FVector ACMCharacter::RelativeVelocityNormalized(AActor* Actor)
+FVector ACMCharacter::RelativeVelocityNormalized()
 {
-	if (Actor == nullptr || Actor->GetVelocity().Size() < 0.001)
+	if (GetVelocity().Size() < 0.001)
 	{
 		return FVector::ZeroVector;
 	}
 
 	FRotator RelativeRotation = UKismetMathLibrary::NormalizedDeltaRotator(
-		Actor->GetActorRotation(), Actor->GetVelocity().Rotation());
+		GetActorRotation(), GetVelocity().Rotation());
 
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(RelativeRotation);
 	FVector RightVector = UKismetMathLibrary::GetRightVector(RelativeRotation);
@@ -85,15 +103,15 @@ FVector ACMCharacter::RelativeVelocityNormalized(AActor* Actor)
 	return FVector(RightVector.X, ForwardVector.X, 0.f);
 }
 
-float ACMCharacter::ForwardToLateralVelocityRelativeWeight(AActor* Actor)
+float ACMCharacter::ForwardToLateralVelocityRelativeWeight()
 {
-	FVector ActorVelocityNormalAbs = RelativeVelocityNormalized(Actor).GetAbs();
+	FVector ActorVelocityNormalAbs = RelativeVelocityNormalized().GetAbs();
 	return ActorVelocityNormalAbs.Rotation().Yaw / 90.f;
 }
 
 float ACMCharacter::GetRelativeYawFromDirection(ECMMovementDirection Direction)
 {
-	const float RelativeYaw = RelativeRotation.Yaw;
+	const float RelativeYaw = GetRelativeRotation().Yaw;
 	switch (Direction) {
 	case ECMMovementDirection::Forward:
 		return RelativeYaw;
@@ -130,9 +148,10 @@ float ACMCharacter::GetStartTimeFromDistanceCurve(UAnimSequence* Sequence)
 			}
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT(
-		"Distance: %s -- CurveDistance: %s -- CurveTime: %s"),
-		*FString::SanitizeFloat(DistanceLookup), *FString::SanitizeFloat(CurveDistance), *FString::SanitizeFloat(CurveTime));
+	// animation debugging
+// 	UE_LOG(LogTemp, Warning, TEXT(
+// 		"Distance: %s -- CurveDistance: %s -- CurveTime: %s"),
+// 		*FString::SanitizeFloat(DistanceLookup), *FString::SanitizeFloat(CurveDistance), *FString::SanitizeFloat(CurveTime));
 	return CurveTime;
 }
 
@@ -165,12 +184,25 @@ FVector ACMCharacter::ExpectedStopLocation()
 	return PredictResult.LastTraceDestination.Location;
 }
 
+void ACMCharacter::GrantAbility(TSubclassOf<class UGameplayAbility> NewAbility, int AbilityLevel)
+{
+	if (AbilitySystem && HasAuthority() && NewAbility)
+	{
+		AbilitySystem->GiveAbility(FGameplayAbilitySpec(NewAbility.GetDefaultObject(), 1));
+	}
+}
+
+FRotator ACMCharacter::GetRelativeRotation()
+{
+	return UKismetMathLibrary::NormalizedDeltaRotator(GetVelocity().Rotation(), GetActorRotation());
+}
+
 ECMMovementDirection ACMCharacter::GetMovementDirection()
 {
 	if (!IsMoving()) return ECMMovementDirection::Forward;
 
-	FVector ActorVelocityNormal = RelativeVelocityNormalized(this);
-	if (ForwardToLateralVelocityRelativeWeight(this) > 0.45f)
+	FVector ActorVelocityNormal = RelativeVelocityNormalized();
+	if (ForwardToLateralVelocityRelativeWeight() > 0.45f)
 	{
 		return ActorVelocityNormal.Y >= 0.f ? ECMMovementDirection::Forward : ECMMovementDirection::Backward;
 	}
@@ -210,7 +242,66 @@ float ACMCharacter::GetFloorSlope()
 void ACMCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
-	MovementDirection = GetMovementDirection();
-	RelativeRotation = UKismetMathLibrary::NormalizedDeltaRotator(GetVelocity().Rotation(), GetActorRotation());
+// pawn capsule sweep. maxhitdistance by default is a multiple of actor's capsule radius
+TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, float MaxHitDistance /*= -1.f*/)
+{
+	// default hit distance 
+	float MeleeCapsuleRadius = MaxHitDistance < 0.f ? GetCapsuleComponent()->GetScaledCapsuleRadius() * 6 : MaxHitDistance;
+	AngleFromFront = AngleFromFront < 0.f ? 180.f : AngleFromFront;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	TArray<FHitResult> HitResults;
+
+	EDrawDebugTrace::Type DebugTraceType = EDrawDebugTrace::None;
+
+	if (DebugAttacks > 0)
+	{
+		DebugTraceType = EDrawDebugTrace::ForDuration;
+
+		// draw forward arrow
+		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+		if (AngleFromFront < 180.f) {
+			// left arrow
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, -AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+			// right arrow
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+		}
+	}
+
+	bool bDidHit = UKismetSystemLibrary::CapsuleTraceMulti(
+		GetWorld(), GetActorLocation(), GetActorLocation() - FVector(0.f, 0.f, 0.01f), MeleeCapsuleRadius, GetCapsuleComponent()->GetScaledCapsuleHalfHeight(),
+		UEngineTypes::ConvertToTraceType(COLLISION_DAMAGE), false,  ActorsToIgnore, DebugTraceType, HitResults, true);
+
+	TSet<ACMCharacter*> HitCharacters;
+	TArray<FHitResult> MeleeHitResults;
+
+	for (FHitResult HitResult : HitResults)
+	{
+		if (HitResult.GetActor() == nullptr) continue;
+		ACMCharacter* CharacterHit = Cast<ACMCharacter>(HitResult.GetActor());
+		if (CharacterHit && !HitCharacters.Contains(CharacterHit))
+		{
+			float ImpactAngle = UKismetMathLibrary::NormalizedDeltaRotator((HitResult.ImpactPoint - GetActorLocation()).GetSafeNormal2D().Rotation(), GetActorRotation()).Yaw;
+			if (FMath::Abs(ImpactAngle) <= AngleFromFront)
+			{
+				HitCharacters.Add(CharacterHit);
+				// These values are used downstream by gameplay cues
+				HitResult.Distance = (GetActorLocation() - HitResult.ImpactPoint).Size();
+				HitResult.Location = HitResult.ImpactPoint;
+				HitResult.Normal = HitResult.ImpactNormal;
+				MeleeHitResults.Add(HitResult);
+			}
+
+			if (DebugAttacks > 0)
+			{
+				UE_LOG(LogTemp, Log, TEXT("%s: MeleeHitTrace: %s hit %s at distance %s and angle %s!"),
+					*FString(Role == ROLE_Authority ? "Server" : "Client"),
+					*this->GetName(), *CharacterHit->GetName(), *FString::SanitizeFloat(HitResult.Distance), *FString::SanitizeFloat(ImpactAngle));
+			}
+		}
+	}
+
+	return MeleeHitResults;
 }
