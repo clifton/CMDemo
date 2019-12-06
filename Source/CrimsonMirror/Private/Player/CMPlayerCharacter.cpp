@@ -92,7 +92,7 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 			float InterpSpeed = 8.f;
 			const FRotator CharacterRotation = GetActorRotation();
 			FRotator CurrentYaw = FRotator(0.f, CharacterRotation.Yaw, 0.f);
-			FRotator DesiredYaw = FRotator(0.f, GetDesiredRotation().Yaw, 0.f);
+			FRotator DesiredYaw = GetDesiredRotation();
 			FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);
 			RotateTo.Pitch = CharacterRotation.Pitch;
 			RotateTo.Roll = CharacterRotation.Roll;
@@ -124,8 +124,6 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACMPlayerCharacter::TurnRate);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
-
-	check(AbilitySystemComponent->IsValidLowLevel());
 
 	AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
 		FGameplayAbilityInputBinds(FString("Confirm"), FString("Cancel"), FString("ECMAbilityInputID"),
