@@ -223,7 +223,7 @@ float ACMCharacter::GetMoveSpeed() const
 {
 	if (CharacterAttributeSet.IsValid())
 	{
-		CharacterAttributeSet->GetMoveSpeed();
+		return CharacterAttributeSet->GetMoveSpeed();
 	}
 	else
 	{
