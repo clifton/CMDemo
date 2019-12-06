@@ -166,7 +166,7 @@ protected:
 	FGameplayTag HitDirectionRightTag;
 	FGameplayTag HitDirectionLeftTag;
 	FGameplayTag DeadTag;
-	FGameplayTag EffectRemoveOnDeathTag;
+	FGameplayTag EffectNotCanceledOnDeath;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CrimsonMirror|CMCharacter")
 	FText CharacterName;
