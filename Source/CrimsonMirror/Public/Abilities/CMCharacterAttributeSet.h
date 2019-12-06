@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
-#include "UObject/ObjectMacros.h"
 #include "AbilitySystemComponent.h"
 #include "CMCharacterAttributeSet.generated.h"
 
@@ -12,8 +11,6 @@
     GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
     GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
     GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
-
-class ACMCharacter;
 
 UCLASS()
 class CRIMSONMIRROR_API UCMCharacterAttributeSet : public UAttributeSet

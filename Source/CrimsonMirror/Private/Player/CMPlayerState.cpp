@@ -21,7 +21,7 @@ ACMPlayerState::ACMPlayerState()
 	// Create the attribute set, this replicates by default
 	// Adding it as a subobject of the owning actor of an AbilitySystemComponent
 	// automatically registers the AttributeSet with the AbilitySystemComponent
-	AttributeSetBase = CreateDefaultSubobject<UCMCharacterAttributeSet>(TEXT("AttributeSetBase"));
+	CharacterAttributeSet = CreateDefaultSubobject<UCMCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 
 	// Set PlayerState's NetUpdateFrequency to the same as the Character.
 	// Default is very low for PlayerStates and introduces perceived lag in the ability system.
@@ -39,7 +39,7 @@ UAbilitySystemComponent* ACMPlayerState::GetAbilitySystemComponent() const
 
 UCMCharacterAttributeSet* ACMPlayerState::GetCharacterAttributeSet() const
 {
-	return AttributeSetBase;
+	return CharacterAttributeSet;
 }
 
 bool ACMPlayerState::IsAlive() const
@@ -62,52 +62,52 @@ void ACMPlayerState::ShowAbilityConfirmCancelText(bool ShowText)
 
 float ACMPlayerState::GetHealth() const
 {
-	return AttributeSetBase->GetHealth();
+	return CharacterAttributeSet->GetHealth();
 }
 
 float ACMPlayerState::GetMaxHealth() const
 {
-	return AttributeSetBase->GetMaxHealth();
+	return CharacterAttributeSet->GetMaxHealth();
 }
 
 float ACMPlayerState::GetHealthRegenRate() const
 {
-	return AttributeSetBase->GetHealthRegenRate();
+	return CharacterAttributeSet->GetHealthRegenRate();
 }
 
 float ACMPlayerState::GetMana() const
 {
-	return AttributeSetBase->GetMana();
+	return CharacterAttributeSet->GetMana();
 }
 
 float ACMPlayerState::GetMaxMana() const
 {
-	return AttributeSetBase->GetMaxMana();
+	return CharacterAttributeSet->GetMaxMana();
 }
 
 float ACMPlayerState::GetManaRegenRate() const
 {
-	return AttributeSetBase->GetManaRegenRate();
+	return CharacterAttributeSet->GetManaRegenRate();
 }
 
 float ACMPlayerState::GetStamina() const
 {
-	return AttributeSetBase->GetStamina();
+	return CharacterAttributeSet->GetStamina();
 }
 
 float ACMPlayerState::GetMaxStamina() const
 {
-	return AttributeSetBase->GetMaxStamina();
+	return CharacterAttributeSet->GetMaxStamina();
 }
 
 float ACMPlayerState::GetStaminaRegenRate() const
 {
-	return AttributeSetBase->GetStaminaRegenRate();
+	return CharacterAttributeSet->GetStaminaRegenRate();
 }
 
 float ACMPlayerState::GetMoveSpeed() const
 {
-	return AttributeSetBase->GetMoveSpeed();
+	return CharacterAttributeSet->GetMoveSpeed();
 }
 
 void ACMPlayerState::BeginPlay()
@@ -117,15 +117,15 @@ void ACMPlayerState::BeginPlay()
 	if (AbilitySystemComponent)
 	{
 		// Attribute change callbacks
-		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &ACMPlayerState::HealthChanged);
-		MaxHealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetMaxHealthAttribute()).AddUObject(this, &ACMPlayerState::MaxHealthChanged);
-		HealthRegenRateChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthRegenRateAttribute()).AddUObject(this, &ACMPlayerState::HealthRegenRateChanged);
-		ManaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaAttribute()).AddUObject(this, &ACMPlayerState::ManaChanged);
-		MaxManaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetMaxManaAttribute()).AddUObject(this, &ACMPlayerState::MaxManaChanged);
-		ManaRegenRateChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetManaRegenRateAttribute()).AddUObject(this, &ACMPlayerState::ManaRegenRateChanged);
-		StaminaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetStaminaAttribute()).AddUObject(this, &ACMPlayerState::StaminaChanged);
-		MaxStaminaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetMaxStaminaAttribute()).AddUObject(this, &ACMPlayerState::MaxStaminaChanged);
-		StaminaRegenRateChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetStaminaRegenRateAttribute()).AddUObject(this, &ACMPlayerState::StaminaRegenRateChanged);
+		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetHealthAttribute()).AddUObject(this, &ACMPlayerState::HealthChanged);
+		MaxHealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &ACMPlayerState::MaxHealthChanged);
+		HealthRegenRateChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetHealthRegenRateAttribute()).AddUObject(this, &ACMPlayerState::HealthRegenRateChanged);
+		ManaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetManaAttribute()).AddUObject(this, &ACMPlayerState::ManaChanged);
+		MaxManaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetMaxManaAttribute()).AddUObject(this, &ACMPlayerState::MaxManaChanged);
+		ManaRegenRateChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetManaRegenRateAttribute()).AddUObject(this, &ACMPlayerState::ManaRegenRateChanged);
+		StaminaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetStaminaAttribute()).AddUObject(this, &ACMPlayerState::StaminaChanged);
+		MaxStaminaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetMaxStaminaAttribute()).AddUObject(this, &ACMPlayerState::MaxStaminaChanged);
+		StaminaRegenRateChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetStaminaRegenRateAttribute()).AddUObject(this, &ACMPlayerState::StaminaRegenRateChanged);
 
 		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.Stun")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACMPlayerState::StunTagChanged);
 	}

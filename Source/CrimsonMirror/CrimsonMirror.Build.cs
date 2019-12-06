@@ -12,7 +12,8 @@ public class CrimsonMirror : ModuleRules
             new string[] {
                 "Core",
                 "CoreUObject",
-                "Engine"
+                "Engine",
+                "InputCore"
             }
         );
 

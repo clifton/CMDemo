@@ -7,9 +7,6 @@
 #include "CMPlayerState.generated.h"
 
 
-class UCMCharacterAttributeSet;
-class UCMAbilitySystemComponent;
-
 UCLASS()
 class CRIMSONMIRROR_API ACMPlayerState : public APlayerState, public IAbilitySystemInterface
 {
@@ -31,7 +28,7 @@ public:
 
 
 	/**
-	* Getters for attributes from GDAttributeSetBase. Returns Current Value unless otherwise specified.
+	* Getters for attributes from CMCharacterAttributeSet. Returns Current Value unless otherwise specified.
 	*/
 
 	UFUNCTION(BlueprintCallable, Category = "CrimsonMirror|CMPlayerState|Attributes")
@@ -69,7 +66,7 @@ protected:
 	class UCMAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY()
-	class UCMCharacterAttributeSet* AttributeSetBase;
+	class UCMCharacterAttributeSet* CharacterAttributeSet;
 
 	FGameplayTag DeadTag;
 

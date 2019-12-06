@@ -34,25 +34,6 @@ ACMCharacter::ACMCharacter(const class FObjectInitializer& ObjectInitializer) :
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
 
-	// Create a camera boom (pulls in towards the player if there is a collision)
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	SpringArmComp->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
-	// Create a follow camera
-	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
-	// use alternate implementation
-	// AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem"));
-	// AbilitySystemComponent.Get()->SetIsReplicated(true);
-
-	CreateDefaultSubobject<UCMCharacterAttributeSet>(TEXT("AttributeSet"));
-
-	SetReplicates(true);
-	bReplicateMovement = true;
 	bAlwaysRelevant = true;
 	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
 	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
@@ -244,6 +225,10 @@ float ACMCharacter::GetMoveSpeed() const
 	{
 		CharacterAttributeSet->GetMoveSpeed();
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Character attribute set is invalid!"));
+	}
 
 	return 0.0f;
 }
@@ -393,13 +378,6 @@ void ACMCharacter::SetStamina(float Stamina)
 void ACMCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UCharacterMovementComponent* MC = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	if (MC->BrakingDecelerationWalking > 500.f)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Animation logic incompatible with high BrakingDecelerationWalking, use gravity/friction instead"));
-		MC->BrakingDecelerationWalking = 200.f;
-	}
 }
 
 void ACMCharacter::GetMovementDirections(ECMMovementDirection& Primary, ECMMovementDirection& Secondary)
@@ -497,7 +475,7 @@ float ACMCharacter::GetStartTimeFromDistanceCurve(UAnimSequence* Sequence)
 FVector ACMCharacter::ExpectedStopLocation()
 {
 	UCharacterMovementComponent* MC = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	checkf(MC->BrakingDecelerationWalking <= 500.f, TEXT("Animation logic incompatible with high BrakingDecelerationWalking, use gravity/friction instead"))
+	// checkf(MC->BrakingDecelerationWalking <= 500.f, TEXT("Animation logic incompatible with high BrakingDecelerationWalking, use gravity/friction instead"))
 
 	FPredictProjectilePathResult PredictResult;
 	FPredictProjectilePathParams PredictParams;

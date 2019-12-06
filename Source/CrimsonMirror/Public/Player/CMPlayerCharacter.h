@@ -62,9 +62,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|Camera")
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	USkeletalMeshComponent* GunComponent;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
 	TSubclassOf<class UCMPlayerStatusBarWidget> UIPlayerStatusBarClass;
 

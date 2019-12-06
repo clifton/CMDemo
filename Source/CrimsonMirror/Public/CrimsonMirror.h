@@ -7,10 +7,8 @@
 #define ACTOR_ROLE_FSTRING *(FindObject<UEnum>(ANY_PACKAGE, TEXT("ENetRole"), true)->GetNameStringByValue(Role))
 #define GET_ACTOR_ROLE_FSTRING(Actor) *(FindObject<UEnum>(ANY_PACKAGE, TEXT("ENetRole"), true)->GetNameStringByValue(Actor->Role))
 
-
 // Collision Trace Channels
 #define COLLISION_DAMAGE		ECC_GameTraceChannel1
-
 
 // Enums
 UENUM(BlueprintType)

@@ -1,14 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "CMHUDWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class CRIMSONMIRROR_API UCMHUDWidget : public UUserWidget
 {

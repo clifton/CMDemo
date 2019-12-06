@@ -2,10 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "CMCharacter.h"
 #include "CMPlayerController.generated.h"
 
-
-class ACMCharacter;
 
 UCLASS()
 class CRIMSONMIRROR_API ACMPlayerController : public APlayerController

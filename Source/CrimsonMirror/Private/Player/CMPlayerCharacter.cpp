@@ -27,6 +27,16 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	// 	BaseTurnRate = 45.f;
 	// 	BaseLookUpRate = 45.f;
 
+
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(FName("CameraBoom"));
+	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->SetRelativeLocation(FVector(0, 0, 68.492264));
+
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(FName("FollowCamera"));
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->FieldOfView = 80.0f;
+
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f); // ...at this rotation rate
@@ -218,8 +228,8 @@ void ACMPlayerCharacter::BeginPlay()
 
 	// attach weapon to socket here
 
-	StartingCameraBoomArmLength = SpringArmComp->TargetArmLength;
-	StartingCameraBoomLocation = CameraComp->RelativeLocation;
+	StartingCameraBoomArmLength = CameraBoom->TargetArmLength;
+	StartingCameraBoomLocation = FollowCamera->RelativeLocation;
 
 	// @HACK do we need this old hack?
 	// AbilitySystem->InitAbilityActorInfo(this, this);

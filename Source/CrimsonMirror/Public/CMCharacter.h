@@ -10,9 +10,6 @@
 #include "CMCharacter.generated.h"
 
 
-class USpringArmComponent;
-class UCameraComponent;
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterBaseHitReactDelegate, ECMHitReactDirection, Direction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, ACMCharacter*, Character);
 
@@ -150,12 +147,6 @@ public:
 	TArray<FHitResult> MeleeHitTrace(float AngleFromFront = 90.f, float MaxHitDistance = -1.f);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* SpringArmComp;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* CameraComp;
-
 	virtual void BeginPlay() override;
 
 	// BEGIN template functions/attributes
