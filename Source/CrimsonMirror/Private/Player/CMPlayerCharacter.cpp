@@ -27,7 +27,6 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	// 	BaseTurnRate = 45.f;
 	// 	BaseLookUpRate = 45.f;
 
-
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(FName("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bUsePawnControlRotation = true;
@@ -114,16 +113,12 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
  	PlayerInputComponent->BindAxis("MoveForward", this, &ACMPlayerCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveBackward", this, &ACMPlayerCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveLeft", this, &ACMPlayerCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACMPlayerCharacter::MoveRight);
 
 	PlayerInputComponent->BindAxis("LookUp", this, &ACMPlayerCharacter::LookUp);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ACMPlayerCharacter::LookUpRate);
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::Turn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACMPlayerCharacter::TurnRate);
-
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACMPlayerCharacter::Jump);
 
 	AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
 		FGameplayAbilityInputBinds(FString("Confirm"), FString("Cancel"), FString("ECMAbilityInputID"),
