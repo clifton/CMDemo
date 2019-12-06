@@ -10,7 +10,8 @@ UCMGameplayAbility::UCMGameplayAbility()
 
 	// Default tags that block this ability from activating
 	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Dead")));
-	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.Stun")));
+	// stunned, disoriented, incapacitated, being knocked back
+	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.LossOfControl")));
 }
 
 void UCMGameplayAbility::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)

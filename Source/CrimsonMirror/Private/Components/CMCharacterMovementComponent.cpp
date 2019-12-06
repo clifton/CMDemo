@@ -25,10 +25,13 @@ float UCMCharacterMovementComponent::GetMaxSpeed() const
 		return 0.0f;
 	}
 
-	if (Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.Stun"))))
+	// stunned, disoriented, incapacitated, being knocked back
+	if (Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.LossOfControl"))))
 	{
 		return 0.0f;
 	}
+
+	// handle roots and snares here
 
 	if (RequestToStartSprinting)
 	{

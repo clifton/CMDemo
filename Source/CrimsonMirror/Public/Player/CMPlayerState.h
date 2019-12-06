@@ -98,5 +98,5 @@ protected:
 	virtual void StaminaRegenRateChanged(const FOnAttributeChangeData& Data);
 
 	// Tag change callbacks
-	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	virtual void LossOfControlStatusChanged(const FGameplayTag CallbackTag, int32 NewCount);
 };

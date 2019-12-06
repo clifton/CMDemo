@@ -127,7 +127,7 @@ void ACMPlayerState::BeginPlay()
 		MaxStaminaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetMaxStaminaAttribute()).AddUObject(this, &ACMPlayerState::MaxStaminaChanged);
 		StaminaRegenRateChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetStaminaRegenRateAttribute()).AddUObject(this, &ACMPlayerState::StaminaRegenRateChanged);
 
-		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.Stun")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACMPlayerState::StunTagChanged);
+		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.LossOfControl")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACMPlayerState::LossOfControlStatusChanged);
 	}
 }
 
@@ -304,7 +304,7 @@ void ACMPlayerState::StaminaRegenRateChanged(const FOnAttributeChangeData& Data)
 	}
 }
 
-void ACMPlayerState::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+void ACMPlayerState::LossOfControlStatusChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	if (NewCount > 0)
 	{
@@ -312,7 +312,7 @@ void ACMPlayerState::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 		AbilityTagsToCancel.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability")));
 
 		FGameplayTagContainer AbilityTagsToIgnore;
-		AbilityTagsToIgnore.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.NotCanceledByStun")));
+		AbilityTagsToIgnore.AddTag(FGameplayTag::RequestGameplayTag(FName("Ability.NotCanceledByLossOfControl")));
 
 		AbilitySystemComponent->CancelAbilities(&AbilityTagsToCancel, &AbilityTagsToIgnore);
 	}

@@ -63,10 +63,18 @@ UCMHUDWidget* ACMPlayerController::GetHUD()
 
 void ACMPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACMCharacter* TargetCharacter)
 {
-	UCMFloatingCombatText* DamageText = NewObject<UCMFloatingCombatText>(TargetCharacter, DamageNumberClass);
-	DamageText->RegisterComponent();
-	DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	DamageText->SetDamageText(DamageAmount);
+	
+	if (DamageNumberClass)
+	{
+		UCMFloatingCombatText* DamageText = NewObject<UCMFloatingCombatText>(TargetCharacter, DamageNumberClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->SetDamageText(DamageAmount);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find DamageNumberClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));
+	}
 }
 
 bool ACMPlayerController::ShowDamageNumber_Validate(float DamageAmount, ACMCharacter* TargetCharacter)
