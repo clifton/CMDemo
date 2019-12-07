@@ -4,8 +4,14 @@
 
 ARPG prototype
 
-## Goals
+## Prototype Goals
 
-- Intuitive hybrid targeting/combat system
-- Standard movement and movement cooldowns "feel good"
-- Procedurally generated pve instances that persist in a static world
+- Engaging action combat system with an intuitive hybrid targeting system
+- Character movement and movement cooldowns during combat "feel good"
+- Multiplayer support for all game modes
+- Procedurally generated pve instances
+- Support for dueling and team based pvp
+
+## Current Status
+
+![](https://thumbs.gfycat.com/AnguishedMediumBighorn-size_restricted.gif)
