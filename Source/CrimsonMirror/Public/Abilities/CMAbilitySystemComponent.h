@@ -20,4 +20,6 @@ public:
 
 	// Called from GDDamageExecCalculation. Broadcasts on ReceivedDamage whenever this ASC receives damage.
 	virtual void ReceiveDamage(UCMAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage);
+
+	const float GCDTimeRemaining() const;
 };

@@ -4,11 +4,28 @@
 
 
 // Network Defines
-#define ACTOR_ROLE_FSTRING *(FindObject<UEnum>(ANY_PACKAGE, TEXT("ENetRole"), true)->GetNameStringByValue(Role))
-#define GET_ACTOR_ROLE_FSTRING(Actor) *(FindObject<UEnum>(ANY_PACKAGE, TEXT("ENetRole"), true)->GetNameStringByValue(Actor->Role))
+#define ACTOR_ROLE_FSTRING				*(FindObject<UEnum>(ANY_PACKAGE, TEXT("ENetRole"), true)->GetNameStringByValue(Role))
+#define GET_ACTOR_ROLE_FSTRING(Actor)	*(FindObject<UEnum>(ANY_PACKAGE, TEXT("ENetRole"), true)->GetNameStringByValue(Actor->Role))
 
 // Collision Trace Channels
-#define COLLISION_DAMAGE		ECC_GameTraceChannel1
+#define COLLISION_DAMAGE				ECC_GameTraceChannel1
+
+// Surface Types
+// flesh, wood, stone, metal, etc
+
+// Gameplay Tags
+#define GAMEPLAYTAG_DEAD				FName("State.Dead")
+#define GAMEPLAYTAG_LOSS_OF_CONTROL		FName("State.Debuff.CC.LossOfControl")
+#define GAMEPLAYTAG_GLOBALCOOLDOWN		FName("State.GCD")
+#define GAMEPLAYTAG_NOTBLOCKEDBYGCD		FName("Effect.NotBlockedByGCD")
+#define GAMEPLAYTAG_CHARACTERSKILL		FName("Ability.Skill")
+
+// Gameplay effect tags
+#define GAMEPLAYEFFECT_GLOBALCOOLDOWN   FName("Effect.GlobalCooldown")
+
+// gameplay constants
+#define CM_TIMING_GLOBALCOOLDOWN		1.0f
+
 
 // Enums
 UENUM(BlueprintType)
