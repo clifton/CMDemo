@@ -257,6 +257,7 @@ void ACMCharacter::Die()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->GravityScale = 0;
 	GetCharacterMovement()->Velocity = FVector(0);
+	GetMovementComponent()->StopMovementImmediately();
 
 	OnCharacterDied.Broadcast(this);
 
@@ -282,7 +283,10 @@ void ACMCharacter::Die()
 
 void ACMCharacter::FinishDying()
 {
-	Destroy();
+	DetachFromControllerPendingDestroy();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetLifeSpan(3.0f);
+	// Destroy();
 }
 
 void ACMCharacter::AddCharacterAbilities()

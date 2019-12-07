@@ -100,7 +100,7 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 	}
 }
 
-FRotator ACMPlayerCharacter::GetDesiredRotation()
+const FRotator ACMPlayerCharacter::GetDesiredRotation()
 {
 	FRotator DesiredRotation = CharacterAimRotation;
 	DesiredRotation.Pitch = 0.f;

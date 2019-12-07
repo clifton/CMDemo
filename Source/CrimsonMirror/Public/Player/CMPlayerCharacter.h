@@ -39,7 +39,7 @@ public:
 	FRotator CharacterAimRotation;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	FRotator GetDesiredRotation();
+	const FRotator GetDesiredRotation();
 
 	virtual void Tick(float DeltaTime) override;
 
