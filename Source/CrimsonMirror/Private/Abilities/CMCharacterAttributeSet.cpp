@@ -177,15 +177,15 @@ void UCMCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 					if (SourceController != TargetController)
 					{
 						// Create a dynamic instant Gameplay Effect to give the bounties
-						UGameplayEffect* GEBounty = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("Bounty")));
-						GEBounty->DurationPolicy = EGameplayEffectDurationType::Instant;
+						// UGameplayEffect* GEBounty = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("Bounty")));
+						// GEBounty->DurationPolicy = EGameplayEffectDurationType::Instant;
 
-						int32 Idx = GEBounty->Modifiers.Num();
-						GEBounty->Modifiers.SetNum(Idx + 2);
+						// int32 Idx = GEBounty->Modifiers.Num();
+						// GEBounty->Modifiers.SetNum(Idx + 2);
 
 						// can deal with bounties / rewards here
 
-						Source->ApplyGameplayEffectToSelf(GEBounty, 1.0f, Source->MakeEffectContext());
+						// Source->ApplyGameplayEffectToSelf(GEBounty, 1.0f, Source->MakeEffectContext());
 					}
 				}
 			}
