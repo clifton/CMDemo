@@ -592,18 +592,18 @@ TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, 
 		DebugTraceType = EDrawDebugTrace::ForDuration;
 
 		// draw forward arrow
-		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
 		if (AngleFromFront < 180.f) {
 			// left arrow
-			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, -AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, -AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
 			// right arrow
-			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 20.f, FColor::Blue, true, 2.0f);
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
 		}
 	}
 
 	bool bDidHit = UKismetSystemLibrary::CapsuleTraceMulti(
 		GetWorld(), GetActorLocation(), GetActorLocation() - FVector(0.f, 0.f, 0.01f), MeleeCapsuleRadius, GetCapsuleComponent()->GetScaledCapsuleHalfHeight(),
-		UEngineTypes::ConvertToTraceType(COLLISION_DAMAGE), false,  ActorsToIgnore, DebugTraceType, HitResults, true);
+		UEngineTypes::ConvertToTraceType(COLLISION_DAMAGE), false,  ActorsToIgnore, DebugTraceType, HitResults, true, FLinearColor::Red, FLinearColor::Green, 2.f);
 
 	TSet<ACMCharacter*> HitCharacters;
 	TArray<FHitResult> MeleeHitResults;
