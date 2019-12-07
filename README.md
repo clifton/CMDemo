@@ -8,8 +8,7 @@ ARPG prototype
 
 - Engaging action combat system with an intuitive hybrid targeting system
 - Character movement and movement cooldowns during combat "feel good"
-- Multiplayer support for all game modes
-- Procedurally generated pve instances
+- Procedurally generated pve instances that adjust difficulty to number of players
 - Support for dueling and team based pvp
 
 ## Current Status
