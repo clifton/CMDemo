@@ -25,6 +25,11 @@ void UCMGameplayAbility::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo,
 	{
 		bool ActivatedAbility = ActorInfo->AbilitySystemComponent->TryActivateAbility(Spec.Handle, false);
 	}
+
+	if (!bDoesBypassGlobalCooldown())
+	{
+		ActivationBlockedTags.AddTag(TagFor(GAMEPLAYTAG_GLOBALCOOLDOWN));
+	}
 }
 
 bool UCMGameplayAbility::CanActivateAbility(
@@ -35,7 +40,10 @@ bool UCMGameplayAbility::CanActivateAbility(
 	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags)) return false;
 
 	// if ability does not bypass gcd and character is currently on gcd
-	if (!bDoesBypassGlobalCooldown() && GCDTimeRemaining(ActorInfo) > 0.f) return false;
+	if (!bDoesBypassGlobalCooldown() && GCDTimeRemaining(ActorInfo) > 0.f) {
+		UE_LOG(LogTemp, Error, TEXT("%s activation not blocked by GCD! Canceling on server."), *GetName());
+		return false;
+	}
 
 	return true;
 }
