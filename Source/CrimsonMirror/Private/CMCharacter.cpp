@@ -271,6 +271,8 @@ void ACMCharacter::Die()
 		UE_LOG(LogTemp, Warning, TEXT("%s effects canceled on death"), *FString::FromInt(NumEffectsRemoved))
 	}
 
+	SetActorEnableCollision(false);
+
 	if (DeathMontage)
 	{
 		PlayAnimMontage(DeathMontage);
@@ -283,10 +285,29 @@ void ACMCharacter::Die()
 
 void ACMCharacter::FinishDying()
 {
-	DetachFromControllerPendingDestroy();
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SetLifeSpan(3.0f);
-	// Destroy();
+	// 	// ragdoll logic -- need to make a lot of changes to character mesh before this works
+	//	DetachFromControllerPendingDestroy();
+	// 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	// 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	// 
+	// 	bReplicateMovement = false;
+
+	// 	UCharacterMovementComponent* MovementComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
+	// 	if (MovementComp)
+	// 	{
+	// 		MovementComp->StopMovementImmediately();
+	// 		MovementComp->DisableMovement();
+	// 		MovementComp->SetComponentTickEnabled(false);
+	// 	}
+	// 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	// 	GetMesh()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	// 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	// 	GetMesh()->SetAllBodiesSimulatePhysics(true);
+	// 	GetMesh()->SetSimulatePhysics(true);
+	// 	GetMesh()->WakeAllRigidBodies();
+	// 	GetMesh()->bBlendPhysics = true;
+	Destroy();
 }
 
 void ACMCharacter::AddCharacterAbilities()
