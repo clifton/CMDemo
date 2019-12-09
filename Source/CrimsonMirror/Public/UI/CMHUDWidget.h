@@ -17,7 +17,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetRespawnCountdown(float RespawnTimeRemaining);
 	
-
 	/**
 	* Attribute setters
 	*/

@@ -127,7 +127,7 @@ void ACMPlayerState::BeginPlay()
 		MaxStaminaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetMaxStaminaAttribute()).AddUObject(this, &ACMPlayerState::MaxStaminaChanged);
 		StaminaRegenRateChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetStaminaRegenRateAttribute()).AddUObject(this, &ACMPlayerState::StaminaRegenRateChanged);
 
-		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.CC.LossOfControl")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACMPlayerState::LossOfControlStatusChanged);
+		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_LOSS_OF_CONTROL), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACMPlayerState::LossOfControlStatusChanged);
 	}
 }
 
@@ -148,6 +148,16 @@ void ACMPlayerState::HealthChanged(const FOnAttributeChangeData& Data)
 
 	// Update the HUD
 	// Handled in the UI itself using the AsyncTaskAttributeChanged node as an example how to do it in Blueprint
+	ACMPlayerController* PC = Cast<ACMPlayerController>(GetOwner());
+	if (PC)
+	{
+		UCMHUDWidget* HUD = PC->GetHUD();
+		if (HUD)
+		{
+			HUD->SetCurrentHealth(Health);
+			HUD->SetHealthPercentage(Health / GetMaxHealth());
+		}
+	}
 
 	// If the player died, handle death
 	if (!IsAlive() && !AbilitySystemComponent->HasMatchingGameplayTag(DeadTag))
@@ -182,6 +192,7 @@ void ACMPlayerState::MaxHealthChanged(const FOnAttributeChangeData& Data)
 		if (HUD)
 		{
 			HUD->SetMaxHealth(MaxHealth);
+			HUD->SetHealthPercentage(GetHealth() / MaxHealth);
 		}
 	}
 }
