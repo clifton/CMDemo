@@ -72,7 +72,7 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 
 	AIControllerClass = ACMPlayerAIController::StaticClass();
 
-	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+	DeadTag = FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD);
 }
 
 void ACMPlayerCharacter::Tick(float DeltaTime)

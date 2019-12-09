@@ -29,7 +29,7 @@ ACMPlayerState::ACMPlayerState()
 	NetUpdateFrequency = 100.0f;
 
 	// Cache tags
-	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+	DeadTag = FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD);
 }
 
 UAbilitySystemComponent* ACMPlayerState::GetAbilitySystemComponent() const

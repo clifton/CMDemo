@@ -14,14 +14,16 @@
 // flesh, wood, stone, metal, etc
 
 // Gameplay Tags
-#define GAMEPLAYTAG_DEAD				FName("State.Dead")
-#define GAMEPLAYTAG_LOSS_OF_CONTROL		FName("State.Debuff.CC.LossOfControl")
-#define GAMEPLAYTAG_GLOBALCOOLDOWN		FName("State.GCD")
-#define GAMEPLAYTAG_NOTBLOCKEDBYGCD		FName("Effect.NotBlockedByGCD")
-#define GAMEPLAYTAG_CHARACTERSKILL		FName("Ability.Skill")
+#define GAMEPLAYTAG_DEAD					FName("State.Dead")
+#define GAMEPLAYTAG_LOSS_OF_CONTROL			FName("State.Debuff.CC.LossOfControl")
+#define GAMEPLAYTAG_GLOBALCOOLDOWN			FName("State.GCD")
+#define GAMEPLAYTAG_NOTBLOCKEDBYGCD			FName("Effect.NotBlockedByGCD")
+#define GAMEPLAYTAG_CHARACTERSKILL			FName("Ability.Skill")
+
 
 // Gameplay effect tags
-#define GAMEPLAYEFFECT_GLOBALCOOLDOWN   FName("Effect.GlobalCooldown")
+#define GAMEPLAYEFFECT_GLOBALCOOLDOWN		FName("Effect.GlobalCooldown")
+#define GAMEPLAYEFFECT_NOTCANCELEDONDEATH	FName("Effect.NotCanceledOnDeath")
 
 // gameplay constants
 #define CM_TIMING_GLOBALCOOLDOWN		1.0f
