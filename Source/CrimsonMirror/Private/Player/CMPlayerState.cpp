@@ -29,7 +29,7 @@ ACMPlayerState::ACMPlayerState()
 	NetUpdateFrequency = 100.0f;
 
 	// Cache tags
-	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+	DeadTag = FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD);
 }
 
 UAbilitySystemComponent* ACMPlayerState::GetAbilitySystemComponent() const
@@ -279,15 +279,22 @@ void ACMPlayerState::StaminaChanged(const FOnAttributeChangeData& Data)
 {
 	float Stamina = Data.NewValue;
 
-	// Update the HUD
-	// Handled in the UI itself using the AsyncTaskAttributeChanged node as an example how to do it in Blueprint
+	ACMPlayerController* PC = Cast<ACMPlayerController>(GetOwner());
+	if (PC)
+	{
+		UCMHUDWidget* HUD = PC->GetHUD();
+		if (HUD)
+		{
+			HUD->SetCurrentStamina(Stamina);
+			HUD->SetStaminaPercentage(Stamina / GetMaxStamina());
+		}
+	}
 }
 
 void ACMPlayerState::MaxStaminaChanged(const FOnAttributeChangeData& Data)
 {
 	float MaxStamina = Data.NewValue;
 
-	// Update the HUD
 	ACMPlayerController* PC = Cast<ACMPlayerController>(GetOwner());
 	if (PC)
 	{
@@ -295,6 +302,7 @@ void ACMPlayerState::MaxStaminaChanged(const FOnAttributeChangeData& Data)
 		if (HUD)
 		{
 			HUD->SetMaxStamina(MaxStamina);
+			HUD->SetStaminaPercentage(GetStamina() / MaxStamina);
 		}
 	}
 }

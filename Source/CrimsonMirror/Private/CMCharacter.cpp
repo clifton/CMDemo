@@ -44,8 +44,8 @@ ACMCharacter::ACMCharacter(const class FObjectInitializer& ObjectInitializer) :
 	HitDirectionBackTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Back"));
 	HitDirectionRightTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Right"));
 	HitDirectionLeftTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Left"));
-	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
-	EffectNotCanceledOnDeath = FGameplayTag::RequestGameplayTag(FName("Effect.NotCanceledOnDeath"));
+	DeadTag = FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD);
+	EffectNotCanceledOnDeath = FGameplayTag::RequestGameplayTag(GAMEPLAYEFFECT_NOTCANCELEDONDEATH);
 }
 
 // BEGIN template functions
@@ -268,7 +268,8 @@ void ACMCharacter::Die()
 		FGameplayEffectQuery EffectsCanceledOnDeathQuery = FGameplayEffectQuery::MakeQuery_MatchNoEffectTags(
 			FGameplayTagContainer(EffectNotCanceledOnDeath));
 		int32 NumEffectsRemoved = AbilitySystemComponent->RemoveActiveEffects(EffectsCanceledOnDeathQuery);
-		UE_LOG(LogTemp, Warning, TEXT("%s effects canceled on death"), *FString::FromInt(NumEffectsRemoved))
+		UE_LOG(LogTemp, Warning, TEXT("%s effects canceled on death"), *FString::FromInt(NumEffectsRemoved));
+		AbilitySystemComponent->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD));
 	}
 
 	SetActorEnableCollision(false);
