@@ -23,7 +23,9 @@ public class CrimsonMirror : ModuleRules
                 "GameplayTags",
                 "GameplayTasks",
                 "CustomAnimNode",
-                "CustomAnimNodeEditor"
+                "CustomAnimNodeEditor",
+                "Slate",
+                "SlateCore",
             }
         );
 

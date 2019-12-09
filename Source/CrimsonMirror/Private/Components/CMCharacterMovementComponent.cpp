@@ -2,6 +2,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayTagContainer.h"
 #include "CMCharacter.h"
+#include "CrimsonMirror.h"
 
 
 // base functionality lifted from https://github.com/tranek/GASDocumentation/blob/master/Source/GASDocumentation/Private/Characters/GDCharacterMovementComponent.cpp
