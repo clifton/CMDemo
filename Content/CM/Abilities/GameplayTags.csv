@@ -14,10 +14,11 @@ Effect.HitReact.Left,Effect.HitReact.Left,left hit reaction
 Effect.HitReact.Right,Effect.HitReact.Right,right hit reaction
 Effect.NotBlockedByGCD,Effect.NotBlockedByGCD,Can use even if you're on global cooldown
 Effect.NotCanceledOnDeath,Effect.NotCanceledOnDeath,effect persists even if player dies
+GameplayCue.MeleeAttack.Assassin,GameplayCue.MeleeAttack.Assassin,Assassin primary attack
+GameplayCue.Sprint,GameplayCue.Sprint,Sprint cue
 State.Dead,State.Dead,character is dead
 State.Debuff.CC.LossOfControl.Stun,State.Debuff.CC.LossOfControl.Stun,character is cc'd via stun
+State.Debuff.CC.Movement,State.Debuff.CC.Movement,Character has movement debuff
 State.GCD,State.GCD,global cooldown
 State.Sprinting,State.Sprinting,Character is sprinting
 State.Walking,State.Walking,Character is walking
-State.Debuff.CC.Movement,State.Debuff.CC.Movement,Character has movement debuff
-GameplayCue.Sprint,GameplayCue.Sprint,Sprint cue
