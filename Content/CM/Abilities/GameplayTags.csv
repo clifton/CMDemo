@@ -22,3 +22,4 @@ State.Debuff.CC.Movement,State.Debuff.CC.Movement,Character has movement debuff
 State.GCD,State.GCD,global cooldown
 State.Sprinting,State.Sprinting,Character is sprinting
 State.Walking,State.Walking,Character is walking
+Event.Montage.MeleeHit,Event.Montage.MeleeHit,Montage triggered hit

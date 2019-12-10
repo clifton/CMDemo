@@ -223,6 +223,7 @@ void UCMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME_CONDITION_NOTIFY(UCMCharacterAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCMCharacterAttributeSet, StaminaRegenRate, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCMCharacterAttributeSet, MoveSpeed, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCMCharacterAttributeSet, AttackSpeed, COND_None, REPNOTIFY_Always);
 }
 
 void UCMCharacterAttributeSet::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty)
@@ -287,4 +288,9 @@ void UCMCharacterAttributeSet::OnRep_StaminaRegenRate()
 void UCMCharacterAttributeSet::OnRep_MoveSpeed()
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCMCharacterAttributeSet, MoveSpeed);
+}
+
+void UCMCharacterAttributeSet::OnRep_AttackSpeed()
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCMCharacterAttributeSet, AttackSpeed);
 }

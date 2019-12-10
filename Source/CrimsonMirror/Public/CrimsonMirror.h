@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/Engine.h"
 
 
 // Network Defines
@@ -74,4 +75,23 @@ enum class ECMMovementDirection : uint8
 	Backward		UMETA(DisplayName = "Backward"),	// 1
 	Left			UMETA(DisplayName = "Left"),		// 2
 	Right			UMETA(DisplayName = "Right"),		// 3
+};
+
+UENUM(BlueprintType)
+enum class ECMEquipmentSlot : uint8
+{
+	LeftHand		UMETA(DisplayName = "LeftHand"),		// 0
+	RightHand		UMETA(DisplayName = "RightHand"),		// 1
+	Chest			UMETA(DisplayName = "Chest"),			// 2
+	Helm			UMETA(DisplayName = "Helm"),			// 3
+	Pants			UMETA(DisplayName = "Pants"),			// 4
+	Boots			UMETA(DisplayName = "Boots"),			// 5
+	Gloves			UMETA(DisplayName = "Gloves"),			// 6
+	Shoulders		UMETA(DisplayName = "Shoulders"),		// 7
+	LeftRing		UMETA(DisplayName = "LeftRing"),		// 8
+	RightRing		UMETA(DisplayName = "RightRing"),		// 9
+	LeftEarring		UMETA(DisplayName = "LeftEarring"),		// 10
+	RightEarring	UMETA(DisplayName = "RightEarring"),	// 11
+	Neck			UMETA(DisplayName = "Neck"),			// 12
+	MAX				UMETA(Hidden)							// 13
 };

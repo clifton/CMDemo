@@ -45,10 +45,10 @@ void UCMGACharacterJump::InputReleased(const FGameplayAbilitySpecHandle Handle, 
 
 // Epic's comment
 /**
- *	Canceling an non instanced ability is tricky. Right now this works for Jump since there is nothing that can go wrong by calling
+ *	Canceling a non instanced ability is tricky. Right now this works for Jump since there is nothing that can go wrong by calling
  *	StopJumping() if you aren't already jumping. If we had a montage playing non instanced ability, it would need to make sure the
  *	Montage that *it* played was still playing, and if so, to cancel it. If this is something we need to support, we may need some
- *	light weight data structure to represent 'non intanced abilities in action' with a way to cancel/end them.
+ *	light weight data structure to represent 'non instanced abilities in action' with a way to cancel/end them.
  */
 void UCMGACharacterJump::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
 {
