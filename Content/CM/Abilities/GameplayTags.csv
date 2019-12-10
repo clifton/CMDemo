@@ -23,3 +23,4 @@ State.GCD,State.GCD,global cooldown
 State.Sprinting,State.Sprinting,Character is sprinting
 State.Walking,State.Walking,Character is walking
 Event.Montage.MeleeHit,Event.Montage.MeleeHit,Montage triggered hit
+Event.Montage.AttackComplete,Event.Montage.AttackComplete,Montage attack complete
