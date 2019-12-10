@@ -18,6 +18,7 @@ public:
 protected:
 	float RespawnDelay;
 
+	UPROPERTY(EditDefaultsOnly, Category = GameMode)
 	TSubclassOf<class ACMPlayerCharacter> PlayerCharacterClass;
 
 	AActor* EnemySpawnPoint;
