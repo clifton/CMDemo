@@ -26,7 +26,8 @@ public:
 	static const FPrimaryAssetType	ConsumableItemType;
 	static const FPrimaryAssetType	SkillItemType;
 	static const FPrimaryAssetType	TokenItemType;
-	static const FPrimaryAssetType	WeaponItemType;
+	static const FPrimaryAssetType	EquippableItemType;
+	static const FPrimaryAssetType	WeaponItemType;  // inherits from equippable item type
 
 	/** Returns the current AssetManager object */
 	static UCMAssetManager& Get();

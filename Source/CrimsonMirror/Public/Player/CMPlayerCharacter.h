@@ -5,6 +5,10 @@
 #include "CMPlayerCharacter.generated.h"
 
 
+class UCMEquippableItem;
+
+class UCMItem;
+
 UCLASS()
 class CRIMSONMIRROR_API ACMPlayerCharacter : public ACMCharacter
 {
@@ -12,6 +16,12 @@ class CRIMSONMIRROR_API ACMPlayerCharacter : public ACMCharacter
 	
 public:
 	ACMPlayerCharacter(const class FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	FVector CharacterAcceleration;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	FRotator CharacterAimRotation;
 
 	// Only called on the Server. Calls before Server's AcknowledgePossession.
 	virtual void PossessedBy(AController* NewController) override;
@@ -31,12 +41,6 @@ public:
 	class UCMPlayerStatusBarWidget* GetPlayerStatusBar();
 
 	virtual void FinishDying() override;
-
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	FVector CharacterAcceleration;
-
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	FRotator CharacterAimRotation;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	const FRotator GetDesiredRotation();
