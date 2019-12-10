@@ -84,6 +84,11 @@ public:
 	FGameplayAttributeData MoveSpeed;
 	ATTRIBUTE_ACCESSORS(UCMCharacterAttributeSet, MoveSpeed)
 
+	// AttackSpeed affects how fast characters can move.
+	UPROPERTY(BlueprintReadOnly, Category = "AttackSpeed", ReplicatedUsing = OnRep_AttackSpeed)
+	FGameplayAttributeData AttackSpeed;
+	ATTRIBUTE_ACCESSORS(UCMCharacterAttributeSet, AttackSpeed)
+
 protected:
 	// Helper function to proportionally adjust the value of an attribute when it's associated max attribute changes.
 	// (i.e. When MaxHealth increases, Health increases by an amount that maintains the same percentage as before)
@@ -122,6 +127,9 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MoveSpeed();
+
+	UFUNCTION()
+	virtual void OnRep_AttackSpeed();
 
 private:
 	FGameplayTag HitDirectionFrontTag;
