@@ -2,11 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CMPlayerStatusBarWidget.generated.h"
+#include "CMCharacterStatusBarWidget.generated.h"
 
 
 UCLASS()
-class CRIMSONMIRROR_API UCMPlayerStatusBarWidget : public UUserWidget
+class CRIMSONMIRROR_API UCMCharacterStatusBarWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	

@@ -35,7 +35,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
 	TSubclassOf<class UCMHUDWidget> UIHUDWidgetClass;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|UI")
 	class UCMHUDWidget* UIHUDWidget;
 
 	// Server only

@@ -4,7 +4,7 @@
 #include "CMPlayerCharacter.h"
 #include "CMPlayerController.h"
 #include "UI/CMHUDWidget.h"
-#include "UI/CMPlayerStatusBarWidget.h"
+#include "UI/CMCharacterStatusBarWidget.h"
 
 
 ACMPlayerState::ACMPlayerState()
@@ -138,7 +138,7 @@ void ACMPlayerState::HealthChanged(const FOnAttributeChangeData& Data)
 	ACMPlayerCharacter* PlayerCharacter = Cast<ACMPlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		UCMPlayerStatusBarWidget* PlayerFloatingStatusBar = PlayerCharacter->GetPlayerStatusBar();
+		UCMCharacterStatusBarWidget* PlayerFloatingStatusBar = PlayerCharacter->GetUIStatusBar();
 		if (PlayerFloatingStatusBar)
 		{
 			PlayerFloatingStatusBar->SetHealthPercentage(Health / GetMaxHealth());
@@ -176,7 +176,7 @@ void ACMPlayerState::MaxHealthChanged(const FOnAttributeChangeData& Data)
 	ACMPlayerCharacter* PlayerCharacter = Cast<ACMPlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		UCMPlayerStatusBarWidget* PlayerFloatingStatusBar = PlayerCharacter->GetPlayerStatusBar();
+		UCMCharacterStatusBarWidget* PlayerFloatingStatusBar = PlayerCharacter->GetUIStatusBar();
 		if (PlayerFloatingStatusBar)
 		{
 			PlayerFloatingStatusBar->SetHealthPercentage(GetHealth() / MaxHealth);
@@ -220,7 +220,7 @@ void ACMPlayerState::ManaChanged(const FOnAttributeChangeData& Data)
 	ACMPlayerCharacter* PlayerCharacter = Cast<ACMPlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		UCMPlayerStatusBarWidget* PlayerFloatingStatusBar = PlayerCharacter->GetPlayerStatusBar();
+		UCMCharacterStatusBarWidget* PlayerFloatingStatusBar = PlayerCharacter->GetUIStatusBar();
 		if (PlayerFloatingStatusBar)
 		{
 			PlayerFloatingStatusBar->SetManaPercentage(Mana / GetMaxMana());
@@ -239,7 +239,7 @@ void ACMPlayerState::MaxManaChanged(const FOnAttributeChangeData& Data)
 	ACMPlayerCharacter* PlayerCharacter = Cast<ACMPlayerCharacter>(GetPawn());
 	if (PlayerCharacter)
 	{
-		UCMPlayerStatusBarWidget* PlayerFloatingStatusBar = PlayerCharacter->GetPlayerStatusBar();
+		UCMCharacterStatusBarWidget* PlayerFloatingStatusBar = PlayerCharacter->GetUIStatusBar();
 		if (PlayerFloatingStatusBar)
 		{
 			PlayerFloatingStatusBar->SetManaPercentage(GetMana() / MaxMana);

@@ -28,7 +28,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CrimsonMirror|Camera")
 	FVector GetStartingCameraBoomLocation();
 
-	class UCMPlayerStatusBarWidget* GetPlayerStatusBar();
+	class UCMCharacterStatusBarWidget* GetUIStatusBar();
 
 	virtual void FinishDying() override;
 
@@ -63,13 +63,13 @@ protected:
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
-	TSubclassOf<class UCMPlayerStatusBarWidget> UIPlayerStatusBarClass;
+	TSubclassOf<class UCMCharacterStatusBarWidget> UICharacterStatusBarClass;
 
 	UPROPERTY()
-	class UCMPlayerStatusBarWidget* UIPlayerStatusBar;
+	class UCMCharacterStatusBarWidget* UIStatusBar;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|UI")
-	class UWidgetComponent* UIPlayerStatusBarComp;
+	class UWidgetComponent* UIStatusBarComp;
 
 	FGameplayTag DeadTag;
 
@@ -96,7 +96,7 @@ protected:
 	// Creates and initializes the floating status bar for heroes.
 	// Safe to call many times because it checks to make sure it only executes once.
 	UFUNCTION()
-	void InitializePlayerStatusBar();
+	void InitializeUIStatusBar();
 
 	// Client only
 	virtual void OnRep_PlayerState() override;
