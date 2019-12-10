@@ -2,11 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/WidgetComponent.h"
-#include "CMFloatingCombatText.generated.h"
+#include "CMFloatingCombatTextComponent.generated.h"
 
 
 UCLASS()
-class CRIMSONMIRROR_API UCMFloatingCombatText : public UWidgetComponent
+class CRIMSONMIRROR_API UCMFloatingCombatTextComponent : public UWidgetComponent
 {
 	GENERATED_BODY()
 	

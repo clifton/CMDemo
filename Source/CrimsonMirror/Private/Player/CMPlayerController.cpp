@@ -2,7 +2,7 @@
 #include "CMCharacter.h"
 #include "CMPlayerState.h"
 #include "UI/CMHUDWidget.h"
-#include "UI/CMFloatingCombatText.h"
+#include "UI/CMFloatingCombatTextComponent.h"
 
 
 void ACMPlayerController::CreateHUD()
@@ -48,8 +48,7 @@ void ACMPlayerController::CreateHUD()
 	UIHUDWidget->SetMaxStamina(PS->GetMaxStamina());
 	UIHUDWidget->SetStaminaPercentage(PS->GetStamina() / PS->GetMaxStamina());
 	UIHUDWidget->SetStaminaRegenRate(PS->GetStaminaRegenRate());
-
-	DamageNumberClass = StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/GASDocumentation/UI/WC_DamageText.WC_DamageText_C"));
+	
 	if (!DamageNumberClass)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find DamageNumberClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));
@@ -63,17 +62,12 @@ UCMHUDWidget* ACMPlayerController::GetHUD()
 
 void ACMPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACMCharacter* TargetCharacter)
 {
-	
 	if (DamageNumberClass)
 	{
-		UCMFloatingCombatText* DamageText = NewObject<UCMFloatingCombatText>(TargetCharacter, DamageNumberClass);
+		UCMFloatingCombatTextComponent* DamageText = NewObject<UCMFloatingCombatTextComponent>(TargetCharacter, DamageNumberClass);
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->SetDamageText(DamageAmount);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find DamageNumberClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));
 	}
 }
 

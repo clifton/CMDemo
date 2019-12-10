@@ -13,7 +13,6 @@ ACMGameModeBase::ACMGameModeBase()
 {
 	RespawnDelay = 5.0f;
 
-	PlayerCharacterClass = StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/CM/Players/Assassin/BP_Assassin.BP_Assassin_C"));
 	if (!PlayerCharacterClass)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find HeroClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));

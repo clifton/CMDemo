@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
-#include "UI/CMPlayerStatusBarWidget.h"
+#include "UI/CMCharacterStatusBarWidget.h"
 #include "WidgetComponent.h"
 #include "CMPlayerState.h"
 #include "CMPlayerController.h"
@@ -58,17 +58,11 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	// 	GetMesh()->SetCollisionProfileName(FName("NoCollision"));
 
 	// create weapon component
-	UIPlayerStatusBarComp = CreateDefaultSubobject<UWidgetComponent>(FName("UICMPlayerStatusBarComponent"));
-	UIPlayerStatusBarComp->SetupAttachment(RootComponent);
-	UIPlayerStatusBarComp->SetRelativeLocation(FVector(0, 0, 120));
-	UIPlayerStatusBarComp->SetWidgetSpace(EWidgetSpace::Screen);
-	UIPlayerStatusBarComp->SetDrawSize(FVector2D(500, 500));
-
-	UIPlayerStatusBarClass = StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/GASDocumentation/UI/UI_FloatingStatusBar_Hero.UI_FloatingStatusBar_Hero_C"));
-	if (!UIPlayerStatusBarClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find UIPlayerStatusBarClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));
-	}
+	UIStatusBarComp = CreateDefaultSubobject<UWidgetComponent>(FName("UIStatusBarComponent"));
+	UIStatusBarComp->SetupAttachment(RootComponent);
+	UIStatusBarComp->SetRelativeLocation(FVector(0, 0, 1.1f * GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+	UIStatusBarComp->SetWidgetSpace(EWidgetSpace::Screen);
+	UIStatusBarComp->SetDrawSize(FVector2D(500, 500));
 
 	AIControllerClass = ACMPlayerAIController::StaticClass();
 
@@ -156,7 +150,7 @@ void ACMPlayerCharacter::PossessedBy(AController* NewController)
 			PC->CreateHUD();
 		}
 
-		InitializePlayerStatusBar();
+		InitializeUIStatusBar();
 
 		// Respawn specific things that won't affect first possession.
 
@@ -190,9 +184,9 @@ FVector ACMPlayerCharacter::GetStartingCameraBoomLocation()
 	return StartingCameraBoomLocation;
 }
 
-UCMPlayerStatusBarWidget* ACMPlayerCharacter::GetPlayerStatusBar()
+UCMCharacterStatusBarWidget* ACMPlayerCharacter::GetUIStatusBar()
 {
-	return UIPlayerStatusBar;
+	return UIStatusBar;
 }
 
 void ACMPlayerCharacter::FinishDying()
@@ -217,7 +211,7 @@ void ACMPlayerCharacter::BeginPlay()
 	// Only needed for Heroes placed in world and when the player is the Server.
 	// On respawn, they are set up in PossessedBy.
 	// When the player a client, the floating status bars are all set up in OnRep_PlayerState.
-	InitializePlayerStatusBar();
+	InitializeUIStatusBar();
 
 	// attach weapon to socket here
 
@@ -272,10 +266,10 @@ void ACMPlayerCharacter::MoveRight(float Velocity)
 	AddMovementInput(TargetRightVector * Velocity);
 }
 
-void ACMPlayerCharacter::InitializePlayerStatusBar()
+void ACMPlayerCharacter::InitializeUIStatusBar()
 {
-	// Only create once
-	if (UIPlayerStatusBar || !AbilitySystemComponent.IsValid())
+	// Only create once, dont create a floating status bar for yourself
+	if (UIStatusBar || !AbilitySystemComponent.IsValid() || IsLocallyControlled())
 	{
 		return;
 	}
@@ -284,16 +278,17 @@ void ACMPlayerCharacter::InitializePlayerStatusBar()
 	ACMPlayerController* PC = Cast<ACMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if (PC && PC->IsLocalPlayerController())
 	{
-		if (UIPlayerStatusBarClass)
+		if (UICharacterStatusBarClass)
 		{
-			UIPlayerStatusBar = CreateWidget<UCMPlayerStatusBarWidget>(PC, UIPlayerStatusBarClass);
-			if (UIPlayerStatusBar && UIPlayerStatusBarComp)
+			UIStatusBar = CreateWidget<UCMCharacterStatusBarWidget>(PC, UICharacterStatusBarClass);
+			if (UIStatusBar && UIStatusBarComp)
 			{
-				UIPlayerStatusBarComp->SetWidget(UIPlayerStatusBar);
+				UIStatusBarComp->SetWidget(UIStatusBar);
 
 				// Setup the floating status bar
-				UIPlayerStatusBar->SetHealthPercentage(GetHealth() / GetMaxHealth());
-				UIPlayerStatusBar->SetManaPercentage(GetMana() / GetMaxMana());
+				UIStatusBar->TargetCharacter = this;
+				UIStatusBar->SetHealthPercentage(GetHealth() / GetMaxHealth());
+				UIStatusBar->SetManaPercentage(GetMana() / GetMaxMana());
 			}
 		}
 	}
@@ -327,7 +322,7 @@ void ACMPlayerCharacter::OnRep_PlayerState()
 		}
 
 		// Simulated on proxies don't have their PlayerStates yet when BeginPlay is called so we call it again here
-		InitializePlayerStatusBar();
+		InitializeUIStatusBar();
 
 		// Respawn specific things that won't affect first possession.
 
