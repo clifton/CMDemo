@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "CMCharacter.h"
+#include "CMFloatingCombatText.h"
 #include "CMPlayerController.generated.h"
 
 
@@ -14,8 +15,8 @@ class CRIMSONMIRROR_API ACMPlayerController : public APlayerController
 public:
 	void CreateHUD();
 
-	UPROPERTY(EditAnywhere, Category = "GASDocumentation|UI")
-	TSubclassOf<class UCMFloatingCombatText> DamageNumberClass;
+	UPROPERTY(EditAnywhere, Category = "CrimsonMirror|UI")
+	TSubclassOf<UCMFloatingCombatText> DamageNumberClass;
 
 	class UCMHUDWidget* GetHUD();
 
@@ -34,7 +35,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
 	TSubclassOf<class UCMHUDWidget> UIHUDWidgetClass;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "CrimsonMirror|UI")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
 	class UCMHUDWidget* UIHUDWidget;
 
 	// Server only
