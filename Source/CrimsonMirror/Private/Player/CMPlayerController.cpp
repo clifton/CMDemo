@@ -2,7 +2,7 @@
 #include "CMCharacter.h"
 #include "CMPlayerState.h"
 #include "UI/CMHUDWidget.h"
-#include "UI/CMFloatingCombatText.h"
+#include "UI/CMFloatingCombatTextComponent.h"
 
 
 void ACMPlayerController::CreateHUD()
@@ -64,7 +64,7 @@ void ACMPlayerController::ShowDamageNumber_Implementation(float DamageAmount, AC
 {
 	if (DamageNumberClass)
 	{
-		UCMFloatingCombatText* DamageText = NewObject<UCMFloatingCombatText>(TargetCharacter, DamageNumberClass);
+		UCMFloatingCombatTextComponent* DamageText = NewObject<UCMFloatingCombatTextComponent>(TargetCharacter, DamageNumberClass);
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->SetDamageText(DamageAmount);

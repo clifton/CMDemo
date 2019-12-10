@@ -5,7 +5,6 @@
 #include "CMPlayerController.h"
 #include "UI/CMHUDWidget.h"
 #include "UI/CMPlayerStatusBarWidget.h"
-// #include "UI/CMFloatingCombatText.h"
 
 
 ACMPlayerState::ACMPlayerState()

@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "CMCharacter.h"
-#include "CMFloatingCombatText.h"
+#include "CMFloatingCombatTextComponent.h"
 #include "CMPlayerController.generated.h"
 
 
@@ -16,7 +16,7 @@ public:
 	void CreateHUD();
 
 	UPROPERTY(EditAnywhere, Category = "CrimsonMirror|UI")
-	TSubclassOf<UCMFloatingCombatText> DamageNumberClass;
+	TSubclassOf<UCMFloatingCombatTextComponent> DamageNumberClass;
 
 	class UCMHUDWidget* GetHUD();
 
