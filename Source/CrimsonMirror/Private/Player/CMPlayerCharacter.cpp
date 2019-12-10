@@ -60,14 +60,9 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	// create weapon component
 	UIStatusBarComp = CreateDefaultSubobject<UWidgetComponent>(FName("UIStatusBarComponent"));
 	UIStatusBarComp->SetupAttachment(RootComponent);
-	UIStatusBarComp->SetRelativeLocation(FVector(0, 0, 120));
+	UIStatusBarComp->SetRelativeLocation(FVector(0, 0, 1.1f * GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
 	UIStatusBarComp->SetWidgetSpace(EWidgetSpace::Screen);
 	UIStatusBarComp->SetDrawSize(FVector2D(500, 500));
-
-	if (!UICharacterStatusBarClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find UICharacterStatusBarClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));
-	}
 
 	AIControllerClass = ACMPlayerAIController::StaticClass();
 
@@ -273,8 +268,8 @@ void ACMPlayerCharacter::MoveRight(float Velocity)
 
 void ACMPlayerCharacter::InitializeUIStatusBar()
 {
-	// Only create once
-	if (UIStatusBar || !AbilitySystemComponent.IsValid())
+	// Only create once, dont create a floating status bar for yourself
+	if (UIStatusBar || !AbilitySystemComponent.IsValid() || IsLocallyControlled())
 	{
 		return;
 	}
@@ -291,6 +286,7 @@ void ACMPlayerCharacter::InitializeUIStatusBar()
 				UIStatusBarComp->SetWidget(UIStatusBar);
 
 				// Setup the floating status bar
+				UIStatusBar->TargetCharacter = this;
 				UIStatusBar->SetHealthPercentage(GetHealth() / GetMaxHealth());
 				UIStatusBar->SetManaPercentage(GetMana() / GetMaxMana());
 			}
