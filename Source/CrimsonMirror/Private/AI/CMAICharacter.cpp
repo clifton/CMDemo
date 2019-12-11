@@ -1,5 +1,7 @@
 #include "AI/CMAICharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
+#include "UI/CMCharacterStatusBarWidget.h"
 
 
 ACMAICharacter::ACMAICharacter(const class FObjectInitializer& ObjectInitializer)
@@ -26,7 +28,14 @@ ACMAICharacter::ACMAICharacter(const class FObjectInitializer& ObjectInitializer
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_DAMAGE, ECollisionResponse::ECR_Block);
 
-	// init AI-specific UI components
+	RootComponent = GetCapsuleComponent();
+
+	// create weapon component
+	UIStatusBarComp = CreateDefaultSubobject<UWidgetComponent>(FName("UIStatusBarComponent"));
+	UIStatusBarComp->SetupAttachment(RootComponent);
+	UIStatusBarComp->SetRelativeLocation(FVector(0, 0, 1.1f * GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+	UIStatusBarComp->SetWidgetSpace(EWidgetSpace::Screen);
+	UIStatusBarComp->SetDrawSize(FVector2D(500, 500));
 }
 
 void ACMAICharacter::BeginPlay()
@@ -45,6 +54,7 @@ void ACMAICharacter::BeginPlay()
 		AddCharacterAbilities();
 
 		// Setup FloatingStatusBar UI for Locally Owned Players only, not AI or the server's copy of the PlayerControllers
+		InitializeUIStatusBar();
 
 		// Attribute change callbacks
 		HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributeSet->GetHealthAttribute()).AddUObject(this, &ACMAICharacter::HealthChanged);
@@ -59,6 +69,11 @@ void ACMAICharacter::HealthChanged(const FOnAttributeChangeData& Data)
 	float Health = Data.NewValue;
 
 	// Update floating status bar
+	UCMCharacterStatusBarWidget* PlayerFloatingStatusBar = GetUIStatusBar();
+	if (PlayerFloatingStatusBar)
+	{
+		PlayerFloatingStatusBar->SetHealthPercentage(Health / GetMaxHealth());
+	}
 
 	// If the minion died, handle death
 	if (!IsAlive() && !AbilitySystemComponent->HasMatchingGameplayTag(DeadTag))

@@ -10,7 +10,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
-#include "UI/CMCharacterStatusBarWidget.h"
 #include "CMGameModeBase.h"
 #include "CrimsonMirror.h"
 
@@ -57,16 +56,16 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	// 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	// 	GetMesh()->SetCollisionProfileName(FName("NoCollision"));
 
+	AIControllerClass = ACMPlayerAIController::StaticClass();
+
+	DeadTag = FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD);
+
 	// create weapon component
 	UIStatusBarComp = CreateDefaultSubobject<UWidgetComponent>(FName("UIStatusBarComponent"));
 	UIStatusBarComp->SetupAttachment(RootComponent);
 	UIStatusBarComp->SetRelativeLocation(FVector(0, 0, 1.1f * GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
 	UIStatusBarComp->SetWidgetSpace(EWidgetSpace::Screen);
 	UIStatusBarComp->SetDrawSize(FVector2D(500, 500));
-
-	AIControllerClass = ACMPlayerAIController::StaticClass();
-
-	DeadTag = FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD);
 }
 
 void ACMPlayerCharacter::Tick(float DeltaTime)
@@ -184,11 +183,6 @@ FVector ACMPlayerCharacter::GetStartingCameraBoomLocation()
 	return StartingCameraBoomLocation;
 }
 
-UCMCharacterStatusBarWidget* ACMPlayerCharacter::GetUIStatusBar()
-{
-	return UIStatusBar;
-}
-
 void ACMPlayerCharacter::FinishDying()
 {
 	if (GetLocalRole() == ROLE_Authority)
@@ -264,34 +258,6 @@ void ACMPlayerCharacter::MoveRight(float Velocity)
 {
 	FVector TargetRightVector = UKismetMathLibrary::GetRightVector(GetDesiredRotation());
 	AddMovementInput(TargetRightVector * Velocity);
-}
-
-void ACMPlayerCharacter::InitializeUIStatusBar()
-{
-	// Only create once, dont create a floating status bar for yourself
-	if (UIStatusBar || !AbilitySystemComponent.IsValid() || IsLocallyControlled())
-	{
-		return;
-	}
-
-	// Setup UI for Locally Owned Players only, not AI or the server's copy of the PlayerControllers
-	ACMPlayerController* PC = Cast<ACMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (PC && PC->IsLocalPlayerController())
-	{
-		if (UICharacterStatusBarClass)
-		{
-			UIStatusBar = CreateWidget<UCMCharacterStatusBarWidget>(PC, UICharacterStatusBarClass);
-			if (UIStatusBar && UIStatusBarComp)
-			{
-				UIStatusBarComp->SetWidget(UIStatusBar);
-
-				// Setup the floating status bar
-				UIStatusBar->TargetCharacter = this;
-				UIStatusBar->SetHealthPercentage(GetHealth() / GetMaxHealth());
-				UIStatusBar->SetManaPercentage(GetMana() / GetMaxMana());
-			}
-		}
-	}
 }
 
 // Client only

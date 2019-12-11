@@ -36,6 +36,15 @@ public:
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
+	TSubclassOf<class UCMCharacterStatusBarWidget> UICharacterStatusBarClass;
+
+	UPROPERTY()
+	class UCMCharacterStatusBarWidget* UIStatusBar;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|UI")
+	class UWidgetComponent* UIStatusBarComp;
+
 	UFUNCTION(BlueprintCallable, Category = "CMCharacter")
 	virtual bool IsAlive() const;
 
@@ -141,6 +150,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	FVector ExpectedStopLocation();
 
+	class UCMCharacterStatusBarWidget* GetUIStatusBar();
+
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Traces")
@@ -148,6 +159,12 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+
+	// Creates and initializes the floating status bar for heroes.
+	// Safe to call many times because it checks to make sure it only executes once.
+	UFUNCTION()
+	void InitializeUIStatusBar();
 
 	// BEGIN template functions/attributes
 

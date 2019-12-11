@@ -8,6 +8,9 @@
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CMCharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
+#include "UI/CMCharacterStatusBarWidget.h"
+#include "Player/CMPlayerController.h"
 #include "Animation/AnimSequence.h"
 #include "Net/UnrealNetwork.h"
 #include "CrimsonMirror.h"
@@ -34,6 +37,8 @@ ACMCharacter::ACMCharacter(const class FObjectInitializer& ObjectInitializer) :
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
 
+	RootComponent = GetCapsuleComponent();
+
 	bAlwaysRelevant = true;
 	// ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
 	// ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
@@ -46,6 +51,39 @@ ACMCharacter::ACMCharacter(const class FObjectInitializer& ObjectInitializer) :
 	HitDirectionLeftTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Left"));
 	DeadTag = FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD);
 	EffectNotCanceledOnDeath = FGameplayTag::RequestGameplayTag(GAMEPLAYEFFECT_NOTCANCELEDONDEATH);
+}
+
+UCMCharacterStatusBarWidget* ACMCharacter::GetUIStatusBar()
+{
+	return UIStatusBar;
+}
+
+void ACMCharacter::InitializeUIStatusBar()
+{
+	// Only create once, dont create a floating status bar for yourself
+	if (UIStatusBar || !AbilitySystemComponent.IsValid() || IsLocallyControlled())
+	{
+		return;
+	}
+
+	// Setup UI for Locally Owned Players only, not AI or the server's copy of the PlayerControllers
+	ACMPlayerController * PC = Cast<ACMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PC && PC->IsLocalPlayerController())
+	{
+		if (UICharacterStatusBarClass)
+		{
+			UIStatusBar = CreateWidget<UCMCharacterStatusBarWidget>(PC, UICharacterStatusBarClass);
+			if (UIStatusBar && UIStatusBarComp)
+			{
+				UIStatusBarComp->SetWidget(UIStatusBar);
+
+				// Setup the floating status bar
+				UIStatusBar->TargetCharacter = this;
+				UIStatusBar->SetHealthPercentage(GetHealth() / GetMaxHealth());
+				UIStatusBar->SetManaPercentage(GetMana() / GetMaxMana());
+			}
+		}
+	}
 }
 
 // BEGIN template functions
