@@ -10,6 +10,9 @@ class CRIMSONMIRROR_API ACMAIController : public AAIController
 {
 	GENERATED_BODY()
 
+public:
+	ACMAIController();
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 };

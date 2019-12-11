@@ -62,7 +62,7 @@ UCMHUDWidget* ACMPlayerController::GetHUD()
 
 void ACMPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACMCharacter* TargetCharacter)
 {
-	if (DamageNumberClass)
+	if (TargetCharacter && DamageNumberClass)
 	{
 		UCMFloatingCombatTextComponent* DamageText = NewObject<UCMFloatingCombatTextComponent>(TargetCharacter, DamageNumberClass);
 		DamageText->RegisterComponent();
