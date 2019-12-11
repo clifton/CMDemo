@@ -9,5 +9,7 @@ UCLASS()
 class CRIMSONMIRROR_API ACMAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void OnPossess(APawn* InPawn) override;
 };

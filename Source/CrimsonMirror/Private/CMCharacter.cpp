@@ -332,6 +332,7 @@ void ACMCharacter::InitializeAttributes()
 {
 	if (!AbilitySystemComponent.IsValid())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%s() Missing AbilitySystemComponent for %s."), TEXT(__FUNCTION__), *GetName());
 		return;
 	}
 
@@ -593,12 +594,12 @@ TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, 
 		DebugTraceType = EDrawDebugTrace::ForDuration;
 
 		// draw forward arrow
-		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
+		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 1.f);
 		if (AngleFromFront < 180.f) {
 			// left arrow
-			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, -AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, -AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 1.f);
 			// right arrow
-			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 1.f);
 		}
 	}
 
@@ -628,9 +629,10 @@ TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, 
 
 			if (DebugAttacks > 0)
 			{
-				UE_LOG(LogTemp, Log, TEXT("%s: MeleeHitTrace: %s hit %s at distance %s and angle %s!"),
-					*FString(GetLocalRole() == ROLE_Authority ? "Server" : "Client"),
-					*this->GetName(), *CharacterHit->GetName(), *FString::SanitizeFloat(HitResult.Distance), *FString::SanitizeFloat(ImpactAngle));
+				UE_LOG(LogTemp, Log, TEXT("%s: MeleeHitTrace: %s hit %s at distance %s/%s and angle %s/%s"),
+					*FString(GetLocalRole() == ROLE_Authority ? "Server" : "Client"), *this->GetName(), *CharacterHit->GetName(),
+					*FString::SanitizeFloat(HitResult.Distance), *FString::SanitizeFloat(MeleeCapsuleRadius),
+					*FString::SanitizeFloat(ImpactAngle), *FString::SanitizeFloat(AngleFromFront));
 			}
 		}
 	}
