@@ -27,7 +27,7 @@ void UCMAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
 
-	UAbilitySystemGlobals::Get().InitGlobalData();
+	// ability system data init moved to CMEngineSubsytem
 }
 
 
