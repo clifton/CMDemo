@@ -1,4 +1,4 @@
-#include "CMCharacterStatusBarWidget.h"
+#include "UI/CMCharacterStatusBarWidget.h"
 #include "CMCharacter.h"
 
 

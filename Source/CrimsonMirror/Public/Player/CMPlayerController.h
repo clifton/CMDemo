@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "CMCharacter.h"
-#include "CMFloatingCombatTextComponent.h"
+#include "UI/CMFloatingCombatTextComponent.h"
 #include "CMPlayerController.generated.h"
 
 

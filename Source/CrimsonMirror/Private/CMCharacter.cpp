@@ -7,9 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/CMCharacterMovementComponent.h"
 #include "Animation/AnimSequence.h"
 #include "Net/UnrealNetwork.h"
-#include "CMCharacterMovementComponent.h"
 #include "CrimsonMirror.h"
 
 
@@ -35,9 +35,9 @@ ACMCharacter::ACMCharacter(const class FObjectInitializer& ObjectInitializer) :
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
 
 	bAlwaysRelevant = true;
-	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
-	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
-	ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundOneDecimal;
+	// ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
+	// ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
+	// ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundOneDecimal;
 
 	// Cache tags
 	HitDirectionFrontTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Front"));
@@ -67,7 +67,7 @@ int32 ACMCharacter::GetAbilityLevel(ECMAbilityInputID AbilityID) const
 
 void ACMCharacter::RemoveCharacterAbilities()
 {
-	if (Role != ROLE_Authority || !AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
+	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
 	{
 		return;
 	}
@@ -314,7 +314,7 @@ void ACMCharacter::FinishDying()
 void ACMCharacter::AddCharacterAbilities()
 {
 	// Grant abilities, but only on the server	
-	if (Role != ROLE_Authority || !AbilitySystemComponent.IsValid() || AbilitySystemComponent->CharacterAbilitiesGiven)
+	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent.IsValid() || AbilitySystemComponent->CharacterAbilitiesGiven)
 	{
 		return;
 	}
@@ -354,7 +354,7 @@ void ACMCharacter::InitializeAttributes()
 
 void ACMCharacter::AddStartupEffects()
 {
-	if (Role != ROLE_Authority || !AbilitySystemComponent.IsValid() || AbilitySystemComponent->StartupEffectsApplied)
+	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent.IsValid() || AbilitySystemComponent->StartupEffectsApplied)
 	{
 		return;
 	}
@@ -629,7 +629,7 @@ TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, 
 			if (DebugAttacks > 0)
 			{
 				UE_LOG(LogTemp, Log, TEXT("%s: MeleeHitTrace: %s hit %s at distance %s and angle %s!"),
-					*FString(Role == ROLE_Authority ? "Server" : "Client"),
+					*FString(GetLocalRole() == ROLE_Authority ? "Server" : "Client"),
 					*this->GetName(), *CharacterHit->GetName(), *FString::SanitizeFloat(HitResult.Distance), *FString::SanitizeFloat(ImpactAngle));
 			}
 		}

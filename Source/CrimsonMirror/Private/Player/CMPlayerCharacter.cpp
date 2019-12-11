@@ -1,5 +1,9 @@
-#include "CMPlayerCharacter.h"
+#include "Player/CMPlayerCharacter.h"
+#include "Player/CMPlayerState.h"
+#include "Player/CMPlayerController.h"
+#include "AI/CMPlayerAIController.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -7,10 +11,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/CMCharacterStatusBarWidget.h"
-#include "WidgetComponent.h"
-#include "CMPlayerState.h"
-#include "CMPlayerController.h"
-#include "AI/CMPlayerAIController.h"
 #include "CMGameModeBase.h"
 #include "CrimsonMirror.h"
 
@@ -42,12 +42,12 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
-	NetUpdateFrequency = 66.0f;
-	MinNetUpdateFrequency = 33.0f;
+	// NetUpdateFrequency = 66.0f;
+	// MinNetUpdateFrequency = 33.0f;
 
-	ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ShortComponents;
-	ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
-	ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
+	// ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ShortComponents;
+	// ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
+	// ReplicatedMovement.LocationQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
 
 	// Makes sure that the animations play on the Server so that we can use bone and socket transforms
 	// to do things like spawning projectiles and other FX.
@@ -74,7 +74,7 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// should rotate player pawn
-	if (Role >= ROLE_AutonomousProxy)
+	if (GetLocalRole() >= ROLE_AutonomousProxy)
 	{
 		// is this worth it?
 		CharacterAcceleration = GetCharacterMovement()->GetCurrentAcceleration();
@@ -191,7 +191,7 @@ UCMCharacterStatusBarWidget* ACMPlayerCharacter::GetUIStatusBar()
 
 void ACMPlayerCharacter::FinishDying()
 {
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		ACMGameModeBase* GM = Cast<ACMGameModeBase>(GetWorld()->GetAuthGameMode());
 
@@ -216,7 +216,7 @@ void ACMPlayerCharacter::BeginPlay()
 	// attach weapon to socket here
 
 	StartingCameraBoomArmLength = CameraBoom->TargetArmLength;
-	StartingCameraBoomLocation = FollowCamera->RelativeLocation;
+	StartingCameraBoomLocation = FollowCamera->GetRelativeLocation();
 
 	// @HACK do we need this old hack?
 	// AbilitySystem->InitAbilityActorInfo(this, this);

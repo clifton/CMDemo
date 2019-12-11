@@ -1,7 +1,7 @@
-#include "CMGameplayAbility.h"
+#include "Abilities/CMGameplayAbility.h"
+#include "Abilities/CMAbilitySystemComponent.h"
+#include "Abilities/Common/CMGEGlobalCooldown.h"
 #include "GameplayTagContainer.h"
-#include "CMGEGlobalCooldown.h"
-#include "CMAbilitySystemComponent.h"
 
 
 UCMGameplayAbility::UCMGameplayAbility()

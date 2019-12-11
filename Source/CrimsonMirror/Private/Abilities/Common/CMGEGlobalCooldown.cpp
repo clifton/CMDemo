@@ -1,4 +1,4 @@
-#include "CMGEGlobalCooldown.h"
+#include "Abilities/Common/CMGEGlobalCooldown.h"
 #include "CrimsonMirror.h"
 
 

@@ -1,6 +1,6 @@
-#include "CMDamageExecCalculation.h"
-#include "CMAbilitySystemComponent.h"
-#include "CMCharacterAttributeSet.h"
+#include "Abilities/Common/CMDamageExecCalculation.h"
+#include "Abilities/CMAbilitySystemComponent.h"
+#include "Abilities/CMCharacterAttributeSet.h"
 
 
 // Declare the attributes to capture and define how we want to capture them from the Source and Target.
