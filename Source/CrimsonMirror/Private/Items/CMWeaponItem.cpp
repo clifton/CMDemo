@@ -1,4 +1,4 @@
-#include "CMWeaponItem.h"
+#include "Items/CMWeaponItem.h"
 
 
 // to be implemented in blueprint

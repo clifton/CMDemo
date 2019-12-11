@@ -1,4 +1,4 @@
-#include "CMItem.h"
+#include "Items/CMItem.h"
 
 
 bool UCMItem::IsConsumable() const

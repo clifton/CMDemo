@@ -1,1 +1,1 @@
-#include "CMEquippableItem.h"
+#include "Items/CMEquippableItem.h"

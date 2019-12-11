@@ -1,9 +1,9 @@
-#include "CMCharacterAttributeSet.h"
+#include "Abilities/CMCharacterAttributeSet.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
 #include "CMCharacter.h"
-#include "CMPlayerController.h"
-#include "UnrealNetwork.h"
+#include "Player/CMPlayerController.h"
+#include "Net/UnrealNetwork.h"
 
 
 UCMCharacterAttributeSet::UCMCharacterAttributeSet()

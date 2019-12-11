@@ -1,4 +1,4 @@
-#include "CMPlayerAIController.h"
+#include "AI/CMPlayerAIController.h"
 
 
 ACMPlayerAIController::ACMPlayerAIController()

@@ -1,4 +1,4 @@
-#include "CMGACharacterJump.h"
+#include "Abilities/Common/CMGACharacterJump.h"
 #include "CMCharacter.h"
 #include "CrimsonMirror.h"
 

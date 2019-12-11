@@ -9,6 +9,8 @@ public class CrimsonMirrorEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 
+		DefaultBuildSettings = BuildSettingsVersion.V2;
+
 		ExtraModuleNames.AddRange( new string[] {
 			"CrimsonMirror",
 			"CustomAnimNodeEditor" 

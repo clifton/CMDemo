@@ -1,5 +1,5 @@
 #include "CMAssetManager.h"
-#include "CMItem.h"
+#include "Items/CMItem.h"
 #include "AbilitySystemGlobals.h"
 
 
