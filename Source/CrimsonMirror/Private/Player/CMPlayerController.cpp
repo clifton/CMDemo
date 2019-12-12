@@ -92,15 +92,14 @@ bool ACMPlayerController::SetRespawnCountdown_Validate(float RespawnTimeRemainin
 // Server only
 void ACMPlayerController::OnPossess(APawn* InPawn)
 {
+	Super::OnPossess(InPawn);
+	
 	ACMPlayerState* PS = GetPlayerState<ACMPlayerState>();
 	if (PS)
 	{
 		// Init ASC with PS (Owner) and our new Pawn (AvatarActor)
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, InPawn);
 	}
-
-	// ability system might not be initiated if this is called before
-	Super::OnPossess(InPawn);
 }
 
 void ACMPlayerController::OnRep_PlayerState()
