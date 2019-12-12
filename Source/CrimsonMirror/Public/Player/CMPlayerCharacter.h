@@ -39,6 +39,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	const FRotator GetDesiredRotation();
 
+	virtual void Die() override;
+
 	virtual void Tick(float DeltaTime) override;
 
 protected:
@@ -84,4 +86,10 @@ protected:
 
 	// Client only
 	virtual void OnRep_PlayerState() override;
+
+private:
+	FTimerHandle TimerHandle_TryInitializeAbilityBinds;
+	TWeakObjectPtr<UInputComponent> WeakInputComponent;
+
+	void TryActivateBinds();
 };

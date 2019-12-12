@@ -113,16 +113,31 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::Turn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACMPlayerCharacter::TurnRate);
 
-	if (AbilitySystemComponent.IsValid())
+	// HACK: ASC not properly initialized on initial load
+	WeakInputComponent = PlayerInputComponent;
+	GetWorldTimerManager().ClearTimer(TimerHandle_TryInitializeAbilityBinds);
+	GetWorldTimerManager().SetTimer(TimerHandle_TryInitializeAbilityBinds, this, &ACMPlayerCharacter::TryActivateBinds, 0.2f, true);
+}
+
+void ACMPlayerCharacter::TryActivateBinds()
+{
+	if (AbilitySystemComponent.IsValid() && WeakInputComponent.IsValid())
 	{
-		AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
+		AbilitySystemComponent->BindAbilityActivationToInputComponent(WeakInputComponent.Get(),
 			FGameplayAbilityInputBinds(FString("Confirm"), FString("Cancel"), FString("ECMAbilityInputID"),
 			static_cast<int32>(ECMAbilityInputID::Confirm), static_cast<int32>(ECMAbilityInputID::Cancel)));
+		GetWorldTimerManager().ClearTimer(TimerHandle_TryInitializeAbilityBinds);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No ability system component found in SetupPlayerInputComponent"));
 	}
+}
+
+void ACMPlayerCharacter::Die()
+{
+	Super::Die();
+	GetWorldTimerManager().ClearTimer(TimerHandle_TryInitializeAbilityBinds);
 }
 
 // Server only
