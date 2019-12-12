@@ -113,9 +113,16 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::Turn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACMPlayerCharacter::TurnRate);
 
-	AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
-		FGameplayAbilityInputBinds(FString("Confirm"), FString("Cancel"), FString("ECMAbilityInputID"),
-		static_cast<int32>(ECMAbilityInputID::Confirm), static_cast<int32>(ECMAbilityInputID::Cancel)));
+	if (AbilitySystemComponent.IsValid())
+	{
+		AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent,
+			FGameplayAbilityInputBinds(FString("Confirm"), FString("Cancel"), FString("ECMAbilityInputID"),
+			static_cast<int32>(ECMAbilityInputID::Confirm), static_cast<int32>(ECMAbilityInputID::Cancel)));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No ability system component found in SetupPlayerInputComponent"));
+	}
 }
 
 // Server only
