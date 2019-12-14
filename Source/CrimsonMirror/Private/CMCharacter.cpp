@@ -8,6 +8,9 @@
 #include "DrawDebugHelpers.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CMCharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
+#include "UI/CMCharacterStatusBarWidget.h"
+#include "Player/CMPlayerController.h"
 #include "Animation/AnimSequence.h"
 #include "Net/UnrealNetwork.h"
 #include "CrimsonMirror.h"
@@ -34,6 +37,8 @@ ACMCharacter::ACMCharacter(const class FObjectInitializer& ObjectInitializer) :
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
 
+	RootComponent = GetCapsuleComponent();
+
 	bAlwaysRelevant = true;
 	// ReplicatedMovement.RotationQuantizationLevel = ERotatorQuantization::ByteComponents;
 	// ReplicatedMovement.VelocityQuantizationLevel = EVectorQuantization::RoundWholeNumber;
@@ -46,6 +51,39 @@ ACMCharacter::ACMCharacter(const class FObjectInitializer& ObjectInitializer) :
 	HitDirectionLeftTag = FGameplayTag::RequestGameplayTag(FName("Effect.HitReact.Left"));
 	DeadTag = FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD);
 	EffectNotCanceledOnDeath = FGameplayTag::RequestGameplayTag(GAMEPLAYEFFECT_NOTCANCELEDONDEATH);
+}
+
+UCMCharacterStatusBarWidget* ACMCharacter::GetUIStatusBar()
+{
+	return UIStatusBar;
+}
+
+void ACMCharacter::InitializeUIStatusBar()
+{
+	// Only create once, dont create a floating status bar for yourself
+	if (UIStatusBar || !AbilitySystemComponent.IsValid() || IsLocallyControlled())
+	{
+		return;
+	}
+
+	// Setup UI for Locally Owned Players only, not AI or the server's copy of the PlayerControllers
+	ACMPlayerController * PC = Cast<ACMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (PC && PC->IsLocalPlayerController())
+	{
+		if (UICharacterStatusBarClass)
+		{
+			UIStatusBar = CreateWidget<UCMCharacterStatusBarWidget>(PC, UICharacterStatusBarClass);
+			if (UIStatusBar && UIStatusBarComp)
+			{
+				UIStatusBarComp->SetWidget(UIStatusBar);
+
+				// Setup the floating status bar
+				UIStatusBar->TargetCharacter = this;
+				UIStatusBar->SetHealthPercentage(GetHealth() / GetMaxHealth());
+				UIStatusBar->SetManaPercentage(GetMana() / GetMaxMana());
+			}
+		}
+	}
 }
 
 // BEGIN template functions
@@ -332,6 +370,7 @@ void ACMCharacter::InitializeAttributes()
 {
 	if (!AbilitySystemComponent.IsValid())
 	{
+		UE_LOG(LogTemp, Error, TEXT("%s() Missing AbilitySystemComponent for %s."), TEXT(__FUNCTION__), *GetName());
 		return;
 	}
 
@@ -593,12 +632,12 @@ TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, 
 		DebugTraceType = EDrawDebugTrace::ForDuration;
 
 		// draw forward arrow
-		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
+		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 1.f);
 		if (AngleFromFront < 180.f) {
 			// left arrow
-			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, -AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, -AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 1.f);
 			// right arrow
-			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 2.f);
+			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + GetActorRotation().Add(0.f, AngleFromFront, 0.f).Vector() * MeleeCapsuleRadius, 2.f, FColor::Blue, true, 1.f);
 		}
 	}
 
@@ -628,9 +667,10 @@ TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, 
 
 			if (DebugAttacks > 0)
 			{
-				UE_LOG(LogTemp, Log, TEXT("%s: MeleeHitTrace: %s hit %s at distance %s and angle %s!"),
-					*FString(GetLocalRole() == ROLE_Authority ? "Server" : "Client"),
-					*this->GetName(), *CharacterHit->GetName(), *FString::SanitizeFloat(HitResult.Distance), *FString::SanitizeFloat(ImpactAngle));
+				UE_LOG(LogTemp, Log, TEXT("%s: MeleeHitTrace: %s hit %s at distance %s/%s and angle %s/%s"),
+					*FString(GetLocalRole() == ROLE_Authority ? "Server" : "Client"), *this->GetName(), *CharacterHit->GetName(),
+					*FString::SanitizeFloat(HitResult.Distance), *FString::SanitizeFloat(MeleeCapsuleRadius),
+					*FString::SanitizeFloat(ImpactAngle), *FString::SanitizeFloat(AngleFromFront));
 			}
 		}
 	}

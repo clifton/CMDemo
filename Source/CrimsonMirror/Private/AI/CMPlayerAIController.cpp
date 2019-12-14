@@ -3,5 +3,5 @@
 
 ACMPlayerAIController::ACMPlayerAIController()
 {
-	bWantsPlayerState = true;
+	// bWantsPlayerState = true;
 }

@@ -12,11 +12,6 @@
 ACMGameModeBase::ACMGameModeBase()
 {
 	RespawnDelay = 5.0f;
-
-	if (!PlayerCharacterClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find HeroClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));
-	}
 }
 
 void ACMGameModeBase::PlayerDied(AController* Controller)

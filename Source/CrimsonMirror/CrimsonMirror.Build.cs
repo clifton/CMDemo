@@ -13,7 +13,9 @@ public class CrimsonMirror : ModuleRules
                 "Core",
                 "CoreUObject",
                 "Engine",
-                "InputCore"
+                "InputCore",
+                "AIModule",
+                "NavigationSystem"
             }
         );
 

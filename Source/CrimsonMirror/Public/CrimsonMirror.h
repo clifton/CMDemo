@@ -14,19 +14,21 @@
 // Surface Types
 // flesh, wood, stone, metal, etc
 
-// Gameplay Tags
-#define GAMEPLAYTAG_DEAD					FName("State.Dead")
-#define GAMEPLAYTAG_LOSS_OF_CONTROL			FName("State.Debuff.CC.LossOfControl")
-#define GAMEPLAYTAG_GLOBALCOOLDOWN			FName("State.GCD")
-#define GAMEPLAYTAG_NOTBLOCKEDBYGCD			FName("Effect.NotBlockedByGCD")
-#define GAMEPLAYTAG_CHARACTERSKILL			FName("Ability.Skill")
+// Gameplay State Tags
+#define GAMEPLAYTAG_DEAD						FName("State.Dead")
+#define GAMEPLAYTAG_LOSS_OF_CONTROL				FName("State.Debuff.CC.LossOfControl")
+#define GAMEPLAYTAG_GLOBALCOOLDOWN				FName("State.GCD")
 
+// Gameplay Effect Tags
+#define GAMEPLAYEFFECT_GLOBALCOOLDOWN			FName("Effect.GlobalCooldown")
+#define GAMEPLAYTAG_NOTBLOCKEDBYGCD				FName("Effect.NotBlockedByGCD")
+#define GAMEPLAYEFFECT_NOTCANCELEDONDEATH		FName("Effect.NotCanceledOnDeath")
 
-// Gameplay effect tags
-#define GAMEPLAYEFFECT_GLOBALCOOLDOWN		FName("Effect.GlobalCooldown")
-#define GAMEPLAYEFFECT_NOTCANCELEDONDEATH	FName("Effect.NotCanceledOnDeath")
+// Gameplay Ability Tags
+#define GAMEPLAYTAG_NOTCANCELEDBYLOSSOFCONTROL	FName("Ability.NotCanceledByLossOfControl")
+#define GAMEPLAYTAG_CHARACTERSKILL				FName("Ability.Skill")
 
-// gameplay constants
+// Gameplay Constants
 #define CM_TIMING_GLOBALCOOLDOWN		1.0f
 
 

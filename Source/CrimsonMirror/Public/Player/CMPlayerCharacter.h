@@ -28,8 +28,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CrimsonMirror|Camera")
 	FVector GetStartingCameraBoomLocation();
 
-	class UCMCharacterStatusBarWidget* GetUIStatusBar();
-
 	virtual void FinishDying() override;
 
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
@@ -40,6 +38,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	const FRotator GetDesiredRotation();
+
+	virtual void Die() override;
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -61,15 +61,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|Camera")
 	class UCameraComponent* FollowCamera;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
-	TSubclassOf<class UCMCharacterStatusBarWidget> UICharacterStatusBarClass;
-
-	UPROPERTY()
-	class UCMCharacterStatusBarWidget* UIStatusBar;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|UI")
-	class UWidgetComponent* UIStatusBarComp;
 
 	FGameplayTag DeadTag;
 
@@ -93,11 +84,12 @@ protected:
 	// Mouse + Gamepad
 	void MoveRight(float Value);
 
-	// Creates and initializes the floating status bar for heroes.
-	// Safe to call many times because it checks to make sure it only executes once.
-	UFUNCTION()
-	void InitializeUIStatusBar();
-
 	// Client only
 	virtual void OnRep_PlayerState() override;
+
+private:
+	FTimerHandle TimerHandle_TryInitializeAbilityBinds;
+	TWeakObjectPtr<UInputComponent> WeakInputComponent;
+
+	void TryActivateBinds();
 };
