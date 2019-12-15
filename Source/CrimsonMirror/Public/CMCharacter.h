@@ -35,6 +35,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "CMCharacter")
 	FCharacterDiedDelegate OnCharacterDied;
 
+	UPROPERTY(Replicated, BlueprintReadWrite, VisibleAnywhere, Category = "Target System")
+	AActor* CurrentTarget;
+
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CrimsonMirror|UI")
@@ -171,6 +174,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Traces")
 	TArray<FHitResult> MeleeHitTrace(float AngleFromFront = 90.f, float MaxHitDistance = -1.f);
+
+	UFUNCTION(Server, Reliable)
+	void SetCurrentTarget(AActor* NewTarget);
 
 protected:
 	virtual void BeginPlay() override;

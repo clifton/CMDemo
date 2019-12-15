@@ -7,7 +7,7 @@
 
 class ACMPlayerCharacter;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS()
 class CRIMSONMIRROR_API UCMTargetSystemComponent : public UActorComponent
 {
 	GENERATED_BODY()

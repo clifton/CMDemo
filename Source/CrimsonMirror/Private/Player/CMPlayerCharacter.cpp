@@ -27,17 +27,18 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	// 	BaseTurnRate = 45.f;
 	// 	BaseLookUpRate = 45.f;
 
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(FName("CameraBoom"));
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->SetRelativeLocation(FVector(0, 0, 68.492264));
 
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(FName("FollowCamera"));
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->FieldOfView = 80.0f;
 
-	TargetSystem = CreateDefaultSubobject<UCMTargetSystemComponent>(FName("TargetSystem"));
-	check(TargetSystem);
+	TargetSystem = CreateDefaultSubobject<UCMTargetSystemComponent>(TEXT("TargetSystem"));
+	AddInstanceComponent(TargetSystem);
+	// TargetSystem->OnComponentCreated();
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
@@ -252,9 +253,6 @@ void ACMPlayerCharacter::BeginPlay()
 
 	StartingCameraBoomArmLength = CameraBoom->TargetArmLength;
 	StartingCameraBoomLocation = FollowCamera->GetRelativeLocation();
-
-	// @HACK do we need this old hack?
-	// AbilitySystem->InitAbilityActorInfo(this, this);
 }
 
 void ACMPlayerCharacter::LookUp(float Value)
