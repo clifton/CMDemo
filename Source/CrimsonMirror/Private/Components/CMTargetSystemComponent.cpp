@@ -91,14 +91,20 @@ void UCMTargetSystemComponent::GetTarget()
 
 	AActor* NewTarget = HitActorScores.Num() == 0 ? nullptr : HitActorScores[0].Key;
 	if (NewTarget != CurrentTarget) {
-		if (CurrentTarget) {
-			Cast<ICMTargetableInterface>(CurrentTarget)->Execute_OnUntargeted(CurrentTarget);
-		}
 		if (NewTarget) {
 			Cast<ICMTargetableInterface>(NewTarget)->Execute_OnTargeted(NewTarget);
 		}
 		CurrentTarget = NewTarget;
 	}
+}
+
+void UCMTargetSystemComponent::ClearTarget()
+{
+	if (CurrentTarget)
+	{
+		Cast<ICMTargetableInterface>(CurrentTarget)->Execute_OnUntargeted(CurrentTarget);
+	}
+	CurrentTarget = nullptr;
 }
 
 bool UCMTargetSystemComponent::TargetIsTargetable(AActor* Actor)

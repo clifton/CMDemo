@@ -154,6 +154,7 @@ void ACMPlayerCharacter::TryActivateBinds()
 
 void ACMPlayerCharacter::Die()
 {
+	if (TargetSystem) TargetSystem->ClearTarget();
 	Super::Die();
 	GetWorldTimerManager().ClearTimer(TimerHandle_TryInitializeAbilityBinds);
 }

@@ -29,6 +29,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void GetTarget();
 
+	// clear selected target
+	UFUNCTION(BlueprintCallable)
+	void ClearTarget();
+
 	// Check to see if target implements ICMTargetableInterface
 	UFUNCTION(BlueprintCallable)
 	bool TargetIsTargetable(AActor* Actor);
