@@ -6,6 +6,7 @@
 #include "Abilities/CMCharacterAttributeSet.h"
 #include "Abilities/CMGameplayAbility.h"
 #include "Abilities/CMAbilitySystemComponent.h"
+#include "Interfaces/CMTargetableInterface.h"
 #include "CrimsonMirror.h"
 #include "CMCharacter.generated.h"
 
@@ -14,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterBaseHitReactDelegate, ECMH
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, ACMCharacter*, Character);
 
 UCLASS()
-class CRIMSONMIRROR_API ACMCharacter : public ACharacter, public IAbilitySystemInterface
+class CRIMSONMIRROR_API ACMCharacter : public ACharacter, public IAbilitySystemInterface, public ICMTargetableInterface
 {
 	GENERATED_BODY()
 
@@ -153,6 +154,20 @@ public:
 	class UCMCharacterStatusBarWidget* GetUIStatusBar();
 
 	virtual void Tick(float DeltaTime) override;
+
+	// implement ICMTargetableInterface
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "TargetSystem")
+	bool IsTargetable() const;
+	virtual bool IsTargetable_Implementation() const override;
+
+	// implement ICMTargetableInterface
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "TargetSystem")
+	void OnTargeted() const;
+	virtual void OnTargeted_Implementation() override;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "TargetSystem")
+	void OnUntargeted() const;
+	virtual void OnUntargeted_Implementation() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Traces")
 	TArray<FHitResult> MeleeHitTrace(float AngleFromFront = 90.f, float MaxHitDistance = -1.f);

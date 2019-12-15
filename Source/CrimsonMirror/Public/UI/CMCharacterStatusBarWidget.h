@@ -38,4 +38,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool bShouldRenderCheckDistance();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTargeted();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUntargeted();
 };

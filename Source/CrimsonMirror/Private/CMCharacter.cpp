@@ -86,6 +86,28 @@ void ACMCharacter::InitializeUIStatusBar()
 	}
 }
 
+// target system
+bool ACMCharacter::IsTargetable_Implementation() const
+{
+	return IsAlive();
+}
+
+void ACMCharacter::OnUntargeted_Implementation()
+{
+	if (UIStatusBar)
+	{
+		UIStatusBar->OnUntargeted();
+	}
+}
+
+void ACMCharacter::OnTargeted_Implementation()
+{
+	if (UIStatusBar)
+	{
+		UIStatusBar->OnTargeted();
+	}
+}
+
 // BEGIN template functions
 
 UAbilitySystemComponent* ACMCharacter::GetAbilitySystemComponent() const

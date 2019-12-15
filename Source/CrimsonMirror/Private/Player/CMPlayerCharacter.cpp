@@ -3,6 +3,7 @@
 #include "Player/CMPlayerController.h"
 #include "AI/CMPlayerAIController.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/CMTargetSystemComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -34,6 +35,9 @@ ACMPlayerCharacter::ACMPlayerCharacter(const class FObjectInitializer& ObjectIni
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(FName("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->FieldOfView = 80.0f;
+
+	TargetSystem = CreateDefaultSubobject<UCMTargetSystemComponent>(FName("TargetSystem"));
+	check(TargetSystem);
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
@@ -101,6 +105,18 @@ const FRotator ACMPlayerCharacter::GetDesiredRotation()
 	return DesiredRotation;
 }
 
+void ACMPlayerCharacter::GetNewTarget()
+{
+	if (TargetSystem)
+	{
+		TargetSystem->GetTarget();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Target system not instantiated!"));
+	}
+}
+
 void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -112,6 +128,8 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ACMPlayerCharacter::LookUpRate);
 	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::Turn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACMPlayerCharacter::TurnRate);
+
+	PlayerInputComponent->BindAction("Target", IE_Pressed, this, &ACMPlayerCharacter::GetNewTarget);
 
 	// HACK: ASC not properly initialized on initial load
 	WeakInputComponent = PlayerInputComponent;
@@ -136,6 +154,7 @@ void ACMPlayerCharacter::TryActivateBinds()
 
 void ACMPlayerCharacter::Die()
 {
+	if (TargetSystem) TargetSystem->ClearTarget();
 	Super::Die();
 	GetWorldTimerManager().ClearTimer(TimerHandle_TryInitializeAbilityBinds);
 }
