@@ -328,7 +328,6 @@ void ACMCharacter::Die()
 		FGameplayEffectQuery EffectsCanceledOnDeathQuery = FGameplayEffectQuery::MakeQuery_MatchNoEffectTags(
 			FGameplayTagContainer(EffectNotCanceledOnDeath));
 		int32 NumEffectsRemoved = AbilitySystemComponent->RemoveActiveEffects(EffectsCanceledOnDeathQuery);
-		UE_LOG(LogTemp, Warning, TEXT("%s effects canceled on death"), *FString::FromInt(NumEffectsRemoved));
 		AbilitySystemComponent->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(GAMEPLAYTAG_DEAD));
 	}
 
@@ -698,4 +697,16 @@ TArray<FHitResult> ACMCharacter::MeleeHitTrace(float AngleFromFront /*= 60.f*/, 
 	}
 
 	return MeleeHitResults;
+}
+
+void ACMCharacter::SetCurrentTarget_Implementation(AActor* NewTarget)
+{
+	CurrentTarget = NewTarget;
+}
+
+void ACMCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(ACMCharacter, CurrentTarget, COND_SkipOwner);
 }

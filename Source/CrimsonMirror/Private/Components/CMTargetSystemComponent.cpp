@@ -18,7 +18,6 @@ UCMTargetSystemComponent::UCMTargetSystemComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	// tick maximum of 10 times per second
 	PrimaryComponentTick.TickInterval = 0.1f;
-	bAutoRegister = true;
 }
 
 void UCMTargetSystemComponent::BeginPlay()
@@ -97,6 +96,13 @@ void UCMTargetSystemComponent::GetTarget()
 		}
 		CurrentTarget = NewTarget;
 	}
+
+
+	ACMCharacter* OwnerCharacter = Cast<ACMCharacter>(GetOwner());
+	// update on client
+	OwnerCharacter->CurrentTarget = NewTarget;
+	// update on server
+	OwnerCharacter->SetCurrentTarget(NewTarget);
 }
 
 void UCMTargetSystemComponent::ClearTarget()

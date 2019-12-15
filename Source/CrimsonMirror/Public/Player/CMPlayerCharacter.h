@@ -65,7 +65,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|Camera")
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|TargetSystem")
 	class UCMTargetSystemComponent* TargetSystem;
 
 	FGameplayTag DeadTag;
