@@ -16,6 +16,9 @@ public:
 	// Only called on the Server. Calls before Server's AcknowledgePossession.
 	virtual void PossessedBy(AController* NewController) override;
 
+	UFUNCTION(BlueprintCallable, Category = "TargetSystem")
+	void GetNewTarget();
+
 	// handle input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -61,6 +64,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|Camera")
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "CrimsonMirror|TargetSystem")
+	class UCMTargetSystemComponent* TargetSystem;
 
 	FGameplayTag DeadTag;
 
