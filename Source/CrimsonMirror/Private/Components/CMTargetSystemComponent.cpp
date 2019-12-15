@@ -91,6 +91,7 @@ void UCMTargetSystemComponent::GetTarget()
 
 	AActor* NewTarget = HitActorScores.Num() == 0 ? nullptr : HitActorScores[0].Key;
 	if (NewTarget != CurrentTarget) {
+		ClearTarget();
 		if (NewTarget) {
 			Cast<ICMTargetableInterface>(NewTarget)->Execute_OnTargeted(NewTarget);
 		}
