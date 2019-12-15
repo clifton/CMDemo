@@ -13,4 +13,4 @@ ARPG prototype
 
 ## Current Status
 
-![](https://thumbs.gfycat.com/AdeptShockingAyeaye-size_restricted.gif)
+![](https://thumbs.gfycat.com/UnhealthyOrnateAmbushbug-size_restricted.gif)
