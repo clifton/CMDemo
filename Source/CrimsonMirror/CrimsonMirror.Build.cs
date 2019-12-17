@@ -15,7 +15,8 @@ public class CrimsonMirror : ModuleRules
                 "Engine",
                 "InputCore",
                 "AIModule",
-                "NavigationSystem"
+                "NavigationSystem",
+                "SpatialGDK"
             }
         );
 

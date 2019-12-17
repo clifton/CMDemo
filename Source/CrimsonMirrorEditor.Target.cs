@@ -9,7 +9,8 @@ public class CrimsonMirrorEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 
-		DefaultBuildSettings = BuildSettingsVersion.V2;
+		// Breaks spatial OS build
+		// DefaultBuildSettings = BuildSettingsVersion.V2;
 
 		ExtraModuleNames.AddRange( new string[] {
 			"CrimsonMirror",

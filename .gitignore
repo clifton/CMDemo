@@ -79,3 +79,8 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# spatial os
+logs/
+spatial/logs
+spatial/build

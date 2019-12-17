@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.24",
+	"EngineAssociation": "{9B1DCC89-4961-ABAC-BEA4-599A11653CA7}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -52,6 +52,10 @@
 		},
 		{
 			"Name": "Niagara",
+			"Enabled": true
+		},
+		{
+			"Name": "SpatialGDK",
 			"Enabled": true
 		}
 	]
