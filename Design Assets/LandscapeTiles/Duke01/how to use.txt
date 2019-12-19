@@ -1,0 +1,10 @@
+Hi,
+This heightmap is totally free to use for whatever you want, but please credit me (duke54) if you use this to make a map mod for ARK Survival evolved (or any other game)
+
+
+This free full resolution map is the max individual map size of 8129px square for use in Unreal Engine heightmap terrain import.
+
+
+Unreal Engine Terrain Import
+height map: "heightMap180Percent.png" set the z scale of the terrain to 180
+coverage maps: each coverage map is named according to the corresponding material layer of the "MI_NewIsland" material use on the island terrain

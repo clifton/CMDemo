@@ -13,7 +13,7 @@ public class VictoryBPLibrary : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-				"VictoryBPLibrary/Public"
+				// "VictoryBPLibrary/Public"
 				
 				// ... add public include paths required here ...
 			}
