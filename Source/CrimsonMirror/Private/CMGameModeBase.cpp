@@ -11,6 +11,10 @@
 
 ACMGameModeBase::ACMGameModeBase()
 {
+// #if !UE_EDITOR
+//	bUseAuthentication = true;
+// #endif
+
 	RespawnDelay = 5.0f;
 }
 

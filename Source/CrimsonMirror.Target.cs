@@ -9,6 +9,9 @@ public class CrimsonMirrorTarget : TargetRules
 	{
 		Type = TargetType.Game;
 
+		bUsesSteam = true;
+		UEBuildConfiguration.bCompileSteamOSS = true;
+
 		ExtraModuleNames.AddRange( new string[] { "CrimsonMirror" } );
 	}
 }

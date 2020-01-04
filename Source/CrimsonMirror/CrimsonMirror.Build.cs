@@ -15,7 +15,7 @@ public class CrimsonMirror : ModuleRules
                 "Engine",
                 "InputCore",
                 "AIModule",
-                "NavigationSystem"
+                "NavigationSystem",
             }
         );
 
@@ -24,10 +24,11 @@ public class CrimsonMirror : ModuleRules
                 "GameplayAbilities",
                 "GameplayTags",
                 "GameplayTasks",
-                "CustomAnimNode",
-                "CustomAnimNodeEditor",
+                // "CustomAnimNode",
                 "Slate",
                 "SlateCore",
+                "OnlineSubsystem",
+                "OnlineSubsystemUtils",
             }
         );
 

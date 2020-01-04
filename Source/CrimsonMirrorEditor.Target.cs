@@ -11,6 +11,8 @@ public class CrimsonMirrorEditorTarget : TargetRules
 
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
+		bUsesSteam = true;
+
 		ExtraModuleNames.AddRange( new string[] {
 			"CrimsonMirror",
 			"CustomAnimNodeEditor" 
