@@ -59,7 +59,7 @@ void FAnimNode_SpeedWarping::EvaluateSkeletalControl_AnyThread(FComponentSpacePo
 	TArray<FVector> TSpringForce;
 	TArray<FIKFootLocation> TIKFootLocations;
 
-	if (!FeetDefinitions.Num() == 0)
+	if (FeetDefinitions.Num() != 0)
 	{
 		//Calculate each foot's real position.
 		for (FIKBones & Each : FeetDefinitions)
@@ -252,13 +252,10 @@ void FAnimNode_SpeedWarping::InitializeBoneReferences(const FBoneContainer & Req
 {
 	IkFootRootBone.Initialize(RequiredBones);
 	PelvisBone.Initialize(RequiredBones);
-	if (!FeetDefinitions.Num() == 0)
+	for (FIKBones &FeetDefinition : FeetDefinitions)
 	{
-		for (FIKBones & Each : FeetDefinitions)
-		{
-			Each.IKFootBone.Initialize(RequiredBones);
-			Each.FKFootBone.Initialize(RequiredBones);
-		}
+		FeetDefinition.IKFootBone.Initialize(RequiredBones);
+		FeetDefinition.FKFootBone.Initialize(RequiredBones);
 	}
 }
 

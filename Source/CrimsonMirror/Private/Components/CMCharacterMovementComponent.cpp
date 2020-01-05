@@ -17,7 +17,7 @@ float UCMCharacterMovementComponent::GetMaxSpeed() const
 	ACMCharacter* Owner = Cast<ACMCharacter>(GetOwner());
 	if (!Owner)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s() No Owner"), TEXT(__FUNCTION__));
+		UE_LOG(LogTemp, Error, TEXT("CMChracterMovementComponent: No Owner"));
 		return Super::GetMaxSpeed();
 	}
 

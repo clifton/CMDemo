@@ -10,6 +10,7 @@
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 #include "CMGameModeBase.h"
 #include "CrimsonMirror.h"
@@ -252,7 +253,7 @@ void ACMPlayerCharacter::BeginPlay()
 	// attach weapon to socket here
 
 	StartingCameraBoomArmLength = CameraBoom->TargetArmLength;
-	StartingCameraBoomLocation = FollowCamera->GetRelativeLocation();
+	StartingCameraBoomLocation = FollowCamera->GetRelativeTransform().GetLocation();
 }
 
 void ACMPlayerCharacter::LookUp(float Value)

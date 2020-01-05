@@ -391,13 +391,13 @@ void ACMCharacter::InitializeAttributes()
 {
 	if (!AbilitySystemComponent.IsValid())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Missing AbilitySystemComponent for %s."), TEXT(__FUNCTION__), *GetName());
+		UE_LOG(LogTemp, Error, TEXT("Missing AbilitySystemComponent for %s."), *GetName());
 		return;
 	}
 
 	if (!DefaultAttributes)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Missing DefaultAttributes for %s. Please fill in the character's Blueprint."), TEXT(__FUNCTION__), *GetName());
+		UE_LOG(LogTemp, Error, TEXT("Missing DefaultAttributes for %s. Please fill in the character's Blueprint."), *GetName());
 		return;
 	}
 

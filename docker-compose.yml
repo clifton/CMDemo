@@ -1,0 +1,13 @@
+version: '2'
+services:
+    dedicated:
+        build: ./Docker
+        user: ue4
+        volumes:
+            - "./Publish/LinuxServer:/home/ue4/CrimsonMirror"
+            - "./Docker/steamclient.so:/home/ue4/CrimsonMirror/Engine/Binaries/ThirdParty/Steamworks/Steamv146/x86_64-unknown-linux-gnu/steamclient.so"
+        working_dir: "/home/ue4/CrimsonMirror"
+        command: "./CrimsonMirrorServer.sh"
+        ports:
+            - "7777:7777"
+            - "27015:27015"

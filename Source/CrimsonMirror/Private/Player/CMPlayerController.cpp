@@ -15,7 +15,7 @@ void ACMPlayerController::CreateHUD()
 
 	if (!UIHUDWidgetClass)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Missing UIHUDWidgetClass. Please fill in on the Blueprint of the PlayerController."), TEXT(__FUNCTION__));
+		UE_LOG(LogTemp, Error, TEXT("Missing UIHUDWidgetClass. Please fill in on the Blueprint of the PlayerController."));
 		return;
 	}
 
@@ -51,7 +51,7 @@ void ACMPlayerController::CreateHUD()
 	
 	if (!DamageNumberClass)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Failed to find DamageNumberClass. If it was moved, please update the reference location in C++."), TEXT(__FUNCTION__));
+		UE_LOG(LogTemp, Error, TEXT("Failed to find DamageNumberClass. If it was moved, please update the reference location in C++."));
 	}
 }
 
