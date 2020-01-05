@@ -1,7 +1,7 @@
 FROM nvidia/opengl:1.0-glvnd-devel-ubuntu18.04
 
 # Add a sentinel label so we can easily identify all derived images, including intermediate images
-LABEL com.clifton.ue4.sentinel="1"
+LABEL ue4.sentinel="1"
 
 # Disable interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive

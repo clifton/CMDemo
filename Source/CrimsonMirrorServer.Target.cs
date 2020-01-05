@@ -7,6 +7,8 @@ public class CrimsonMirrorServerTarget : TargetRules
     {
         Type = TargetType.Server;
 
+        DefaultBuildSettings = BuildSettingsVersion.V2;
+
         ExtraModuleNames.Add("CrimsonMirror");
     }
 }
