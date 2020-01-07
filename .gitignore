@@ -82,3 +82,6 @@ DerivedDataCache/*
 
 # Published versions
 Publish/*
+
+# Logs
+*.log

@@ -13,7 +13,7 @@ public class CrimsonMirrorEditorTarget : TargetRules
 
 		bUsesSteam = true;
 
-		ExtraModuleNames.AddRange( new string[] {
+        ExtraModuleNames.AddRange( new string[] {
 			"CrimsonMirror",
 			"CustomAnimNodeEditor" 
 		} );

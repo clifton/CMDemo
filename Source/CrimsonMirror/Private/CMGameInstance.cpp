@@ -9,7 +9,8 @@ UCMGameInstance::UCMGameInstance(const FObjectInitializer& ObjectInitializer)
 	/** Bind function for CREATING a Session */
 	OnCreateSessionCompleteDelegate = FOnCreateSessionCompleteDelegate::CreateUObject(this, &UCMGameInstance::OnCreateSessionComplete);
 	OnStartSessionCompleteDelegate = FOnStartSessionCompleteDelegate::CreateUObject(this, &UCMGameInstance::OnStartOnlineGameComplete);
-	
+// 	IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get(FName(*"Steam"));
+// 	auto SteamSub = Cast<OnlineSubsystemSteam>OnlineSub;
 }
 
 bool UCMGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers)
@@ -42,7 +43,7 @@ bool UCMGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName S
 			SessionSettings->bAllowJoinViaPresence = true;
 			SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 
-			SessionSettings->Set(SETTING_MAPNAME, FString("00-DefaultLevel"), EOnlineDataAdvertisementType::ViaOnlineService);
+			SessionSettings->Set(SETTING_MAPNAME, FString("MainMenu"), EOnlineDataAdvertisementType::ViaOnlineService);
 
 			// Set the delegate to the Handle of the SessionInterface
 			OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);

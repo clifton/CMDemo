@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends --no-install-su
     xdg-user-dirs \
     wget \
     zip \
+    netcat \
     && apt-get clean autoclean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* 
@@ -35,4 +36,6 @@ ENV STEAMCMDDIR=/home/ue4/steamcmd
 RUN mkdir -p ${STEAMCMDDIR} && cd ${STEAMCMDDIR} \
     && wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
 
-EXPOSE 7777 27015
+EXPOSE 27016
+EXPOSE 7777/tcp
+EXPOSE 7777/udp
