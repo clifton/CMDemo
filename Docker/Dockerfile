@@ -36,6 +36,7 @@ ENV STEAMCMDDIR=/home/ue4/steamcmd
 RUN mkdir -p ${STEAMCMDDIR} && cd ${STEAMCMDDIR} \
     && wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
 
-EXPOSE 27016
+EXPOSE 27016/tcp
+EXPOSE 27016/udp
 EXPOSE 7777/tcp
 EXPOSE 7777/udp

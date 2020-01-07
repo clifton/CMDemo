@@ -16,7 +16,8 @@ services:
         ports:
             - "7777:7777/tcp"
             - "7777:7777/udp"
-            - "27016:27016"
+            - "27016:27016/tcp"
+            - "27016:27016/udp"
     steamcmd:
         extends: base
         tty: true

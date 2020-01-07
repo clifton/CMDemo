@@ -85,3 +85,6 @@ Publish/*
 
 # Logs
 *.log
+
+# Secrets
+.env
