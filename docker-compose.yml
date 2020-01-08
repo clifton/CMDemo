@@ -1,25 +1,24 @@
 version: '2'
 services:
     base:
-        build: ./Docker
+        build:
+            context: ./Docker
+            dockerfile: Dockerfile
+            args:
+                STEAM_USERNAME: ${STEAM_USERNAME}
+                STEAM_PASSWORD: ${STEAM_PASSWORD}
         user: ue4
+    dedicated:
+        extends: base
         environment:
             SteamAppId: "1220770"
             SteamGameId: "1220770"
-        volumes:
-            - "./Publish/LinuxServer:/home/ue4/CrimsonMirror"
-            - "./Docker/steamclient.so:/home/ue4/CrimsonMirror/Engine/Binaries/ThirdParty/Steamworks/Steamv146/x86_64-unknown-linux-gnu/steamclient.so"
+        # volumes:
+        #     - "./Docker/LinuxServer:/home/ue4/CrimsonMirror"
         working_dir: "/home/ue4/CrimsonMirror"
-    dedicated:
-        extends: base
-        command: ["./CrimsonMirrorServer.sh", "-log", "-jemalloc"]
+        command: ["./CrimsonMirrorServer.sh", "-server", "-log", "-listen"]
         ports:
             - "7777:7777/tcp"
             - "7777:7777/udp"
             - "27016:27016/tcp"
             - "27016:27016/udp"
-    steamcmd:
-        extends: base
-        tty: true
-        stdin_open: true
-        command: bash
