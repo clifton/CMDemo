@@ -38,7 +38,7 @@ kubectl create namespace agones-system
 helm repo add agones https://agones.dev/chart/stable
 helm install cm-release --namespace agones-system \
   --set gameservers.minPort=7000,gameservers.maxPort=8000 \
-  --set agones.ping.replicas=1,agones.allocator.replicas=1,agones.controller.numWorkers=4,agones.allocator.install=false \
+  --set agones.ping.replicas=1,agones.allocator.replicas=1,agones.controller.numWorkers=4 \
   --set agones.controller.nodeSelector.type=agones-system-node \
   --set agones.ping.nodeSelector.type=agones-system-node \
   agones/agones
@@ -47,4 +47,8 @@ helm install cm-release --namespace agones-system \
 kubectl create -f Docker/gameserver.yaml
 
 # spin down
-# gcloud container clusters resize dedicated --num-nodes=0
+# gcloud container clusters resize dedicated --node-pool game-server-pool --num-nodes=0
+# gcloud container clusters resize dedicated --node-pool agones-system-pool --num-nodes=0
+# spin up
+# gcloud container clusters resize dedicated --node-pool game-server-pool --num-nodes=1
+# gcloud container clusters resize dedicated --node-pool agones-system-pool --num-nodes=1
