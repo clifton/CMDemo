@@ -16,7 +16,7 @@ services:
         # volumes:
         #     - "./Docker/LinuxServer:/home/ue4/CrimsonMirror"
         working_dir: "/home/ue4/CrimsonMirror"
-        command: ["./CrimsonMirrorServer.sh", "-server", "-log", "-listen"]
+        command: stdbuf -i0 -o0 -e0 ./CrimsonMirrorServer.sh
         ports:
             - "7777:7777/tcp"
             - "7777:7777/udp"
