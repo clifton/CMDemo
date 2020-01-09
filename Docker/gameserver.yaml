@@ -1,0 +1,47 @@
+apiVersion: "agones.dev/v1"
+kind: GameServer
+metadata:
+  generateName: "crimsonmirror-"
+spec:
+  ports:
+  - name: game-udp
+    portPolicy: Static
+    containerPort: 7777
+    hostPort: 7777
+    protocol: UDP
+  - name: game-tcp
+    portPolicy: Static
+    containerPort: 7777
+    hostPort: 7777
+    protocol: TCP
+  - name: steam-udp
+    portPolicy: Static
+    containerPort: 27016
+    hostPort: 27016
+    protocol: UDP
+  - name: steam-tcp
+    portPolicy: Static
+    containerPort: 27016
+    hostPort: 27016
+    protocol: TCP
+  template:
+    spec:
+      nodeSelector:
+        type: game-server-node
+      containers:
+      - name: dedicated
+        image: gcr.io/crimsonmirror/dedicated:latest
+        imagePullPolicy: Always
+        command:
+        - ./run.sh
+        env:
+        - name: SteamAppId
+          value: "1220770"
+        - name: SteamGameId
+          value: "1220770"
+        - name: AGONES_ENABLED
+          value: "1"
+        resources:
+          requests:
+            memory: "3.5Gi"
+            cpu: '750m'

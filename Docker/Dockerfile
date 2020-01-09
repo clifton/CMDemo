@@ -38,10 +38,7 @@ USER ue4
 ENV GAMEDIR /home/ue4/CrimsonMirror
 ENV STEAMCMDDIR /home/ue4/steamcmd
 
-# mount in the linux server
-ADD --chown=ue4:ue4 LinuxServer ${GAMEDIR}
-
-# install steam runtimes  ${STEAM_USERNAME} ${STEAM_PASSWORD} \
+# install steam runtimes  ${STEAM_USERNAME} ${STEAM_PASSWORD} not working atm
 RUN mkdir -p ${STEAMCMDDIR} && cd ${STEAMCMDDIR} \
     && wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
 RUN ${STEAMCMDDIR}/steamcmd.sh \
@@ -51,6 +48,12 @@ RUN ${STEAMCMDDIR}/steamcmd.sh \
 RUN mkdir -p /home/ue4/.steam/sdk64 \
     && cp ${STEAMCMDDIR}/linux64/steamclient.so /home/ue4/.steam/sdk64 \
     && mkdir -p ${GAMEDIR}/CrimsonMirror/Saved/SaveGames
+
+# mount in the linux server
+ADD --chown=ue4:ue4 LinuxServer ${GAMEDIR}
+WORKDIR ${GAMEDIR}
+COPY ./run.sh ${GAMEDIR}
+CMD ./run.sh
 
 EXPOSE 27016/tcp
 EXPOSE 27016/udp

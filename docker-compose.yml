@@ -13,10 +13,6 @@ services:
         environment:
             SteamAppId: "1220770"
             SteamGameId: "1220770"
-        # volumes:
-        #     - "./Docker/LinuxServer:/home/ue4/CrimsonMirror"
-        working_dir: "/home/ue4/CrimsonMirror"
-        command: stdbuf -i0 -o0 -e0 ./CrimsonMirrorServer.sh
         ports:
             - "7777:7777/tcp"
             - "7777:7777/udp"
