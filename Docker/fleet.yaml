@@ -1,0 +1,76 @@
+apiVersion: "agones.dev/v1"
+kind: Fleet
+# Fleet Metadata
+# https://v1-13.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#objectmeta-v1-meta
+metadata:
+  name: crimsonmirror-fleet
+  generateName: "crimsonmirror-"
+spec:
+  # the number of GameServers to keep Ready or Allocated in this Fleet. Defaults to 0
+  replicas: 1
+  # defines how GameServers are organised across the cluster.
+  # Options include:
+  # "Packed" (default) is aimed at dynamic Kubernetes clusters, such as cloud providers, wherein we want to bin pack
+  # resources
+  # "Distributed" is aimed at static Kubernetes clusters, wherein we want to distribute resources across the entire
+  # cluster
+  scheduling: Packed
+  # a GameServer template - see:
+  # https://agones.dev/site/docs/reference/gameserver/ for all the options
+  # strategy:
+    # The replacement strategy for when the GameServer template is changed. Default option is "RollingUpdate",
+    # "RollingUpdate" will increment by maxSurge value on each iteration, while decrementing by maxUnavailable on each
+    # iteration, until all GameServers have been switched from one version to another.
+    # "Recreate" terminates all non-allocated GameServers, and starts up a new set with the new details to replace them.
+    # type: RollingUpdate
+    # Only relevant when `type: RollingUpdate`
+    # rollingUpdate:
+      # the amount to increment the new GameServers by. Defaults to 25%
+      # maxSurge: 25%
+      # the amount to decrements GameServers by. Defaults to 25%
+      # maxUnavailable: 25%
+  template:
+    # GameServer metadata
+    spec:
+      ports:
+      - name: game-udp
+        portPolicy: Static
+        containerPort: 7777
+        hostPort: 7777
+        protocol: UDP
+      - name: game-tcp
+        portPolicy: Static
+        containerPort: 7777
+        hostPort: 7777
+        protocol: TCP
+      - name: steam-udp
+        portPolicy: Static
+        containerPort: 27016
+        hostPort: 27016
+        protocol: UDP
+      - name: steam-tcp
+        portPolicy: Static
+        containerPort: 27016
+        hostPort: 27016
+        protocol: TCP
+      template:
+        spec:
+          nodeSelector:
+            type: game-server-node
+          containers:
+          - name: dedicated
+            image: gcr.io/crimsonmirror/dedicated:latest
+            imagePullPolicy: Always
+            command:
+            - ./run.sh
+            env:
+            - name: SteamAppId
+              value: "1220770"
+            - name: SteamGameId
+              value: "1220770"
+            - name: AGONES_ENABLED
+              value: "1"
+            resources:
+              requests:
+                memory: "4Gi"
+                cpu: '1100m'
