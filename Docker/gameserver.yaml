@@ -43,5 +43,5 @@ spec:
           value: "1"
         resources:
           requests:
-            memory: "3.5Gi"
-            cpu: '750m'
+            memory: "5Gi"
+            cpu: '1500m'

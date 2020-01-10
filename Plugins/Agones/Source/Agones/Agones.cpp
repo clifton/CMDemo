@@ -14,7 +14,6 @@
 
 #include "Agones.h"
 #include "AgonesHook.h"
-#include "GenericPlatform/GenericPlatformMisc.h"
 
 #if WITH_EDITOR
 #include "AgonesSettings.h"
@@ -29,8 +28,8 @@
 void FAgonesModule::StartupModule()
 {
 	FWorldDelegates::OnPostWorldInitialization.AddRaw(this, &FAgonesModule::OnWorldInitialized);
-
-	bEnabled = FCString::Atoi(*FGenericPlatformMisc::GetEnvironmentVariable(*FString(TEXT("AGONES_ENABLED")))) > 0;
+	bEnabled = FCString::Atoi(*FPlatformMisc::GetEnvironmentVariable(*FString("AGONES_ENABLED"))) > 0;
+	UE_LOG(LogTemp, Log, TEXT("Agones is %s"), *FString(bEnabled ? "Enabled" : "Disabled"));
 
 #if WITH_EDITOR
 	// register Agones settings

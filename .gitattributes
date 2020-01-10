@@ -2,3 +2,7 @@
 * text=auto
 *.uasset filter=lfs diff=lfs merge=lfs -text
 *.umap filter=lfs diff=lfs merge=lfs -text
+*.sh eol=lf
+*.json eol=lf
+*.yml eol=lf
+*.yaml eol=lf

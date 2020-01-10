@@ -53,7 +53,7 @@ RUN mkdir -p /home/ue4/.steam/sdk64 \
 ADD --chown=ue4:ue4 LinuxServer ${GAMEDIR}
 WORKDIR ${GAMEDIR}
 COPY ./run.sh ${GAMEDIR}
-CMD ./run.sh
+CMD ${GAMEDIR}/run.sh
 
 EXPOSE 27016/tcp
 EXPOSE 27016/udp
