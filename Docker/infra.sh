@@ -54,9 +54,11 @@ helm install cm-release --namespace agones-system \
 kubectl create -f Docker/gameserver.yaml
 
 # spin down
-# gcloud --quiet container clusters resize dedicated --node-pool game-server-pool --num-nodes=0
-# gcloud --quiet container clusters resize dedicated --node-pool agones-system-pool --num-nodes=0
+gcloud --quiet container clusters resize dedicated --node-pool game-server-pool --num-nodes=0
+gcloud --quiet container clusters resize dedicated --node-pool agones-system-pool --num-nodes=0
 
 # spin up
-# gcloud --quiet container clusters resize dedicated --node-pool agones-system-pool --num-nodes=1
-# gcloud --quiet container clusters resize dedicated --node-pool game-server-pool --num-nodes=1
+gcloud --quiet container clusters resize dedicated --node-pool agones-system-pool --num-nodes=1
+gcloud --quiet container clusters resize dedicated --node-pool game-server-pool --num-nodes=1
+
+# kubectl exec $(kubectl get pod -o name) --container dedicated -- /sbin/killall5
