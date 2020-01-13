@@ -6,7 +6,8 @@ public class CrimsonMirror : ModuleRules
 {
 	public CrimsonMirror(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        bUseUnity = false;
 	
         PublicDependencyModuleNames.AddRange(
             new string[] {
@@ -15,7 +16,10 @@ public class CrimsonMirror : ModuleRules
                 "Engine",
                 "InputCore",
                 "AIModule",
-                "NavigationSystem"
+                "NavigationSystem",
+                "OnlineSubsystem",
+                "OnlineSubsystemUtils",
+                "Steamworks",
             }
         );
 
@@ -24,19 +28,11 @@ public class CrimsonMirror : ModuleRules
                 "GameplayAbilities",
                 "GameplayTags",
                 "GameplayTasks",
-                "CustomAnimNode",
-                "CustomAnimNodeEditor",
+                // "CustomAnimNode",
                 "Slate",
                 "SlateCore",
+                "OnlineSubsystem",
             }
         );
-
-        // Uncomment if you are using Slate UI
-        // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-
-        // Uncomment if you are using online features
-        // PrivateDependencyModuleNames.Add("OnlineSubsystem");
-
-        // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
     }
 }

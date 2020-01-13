@@ -2,6 +2,7 @@
 
 #include "CrimsonMirror.h"
 #include "Abilities/Tasks/AbilityTask.h"
+#include "Animation/AnimInstance.h"
 #include "CMTaskPlayMontageAndWaitForEvent.generated.h"
 
 

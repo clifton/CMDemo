@@ -1,0 +1,21 @@
+version: '2'
+services:
+    base:
+        build:
+            context: ./Docker
+            dockerfile: Dockerfile
+            args:
+                STEAM_USERNAME: ${STEAM_USERNAME}
+                STEAM_PASSWORD: ${STEAM_PASSWORD}
+        user: ue4
+    dedicated:
+        extends: base
+        environment:
+            SteamAppId: "1220770"
+            SteamGameId: "1220770"
+            AGONES_ENABLED: "0"
+        ports:
+            - "7777:7777/tcp"
+            - "7777:7777/udp"
+            - "27016:27016/tcp"
+            - "27016:27016/udp"

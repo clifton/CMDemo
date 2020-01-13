@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.24",
+	"EngineAssociation": "{78CBFC07-4B79-073A-3F4E-76B45D86C091}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -52,6 +52,23 @@
 		},
 		{
 			"Name": "Niagara",
+			"Enabled": true
+		},
+		{
+			"Name": "AdvancedSessions",
+			"Enabled": true
+		},
+		{
+			"Name": "AdvancedSteamSessions",
+			"Enabled": true
+		},
+		{
+			"Name": "VictoryBPLibrary",
+			"Enabled": true,
+			"MarketplaceURL": "http://www.ue4code.com"
+		},
+		{
+			"Name": "Agones",
 			"Enabled": true
 		}
 	]

@@ -1,5 +1,6 @@
 #include "AI/CMEnvQueryManager.h"
 #include "VisualLogger/VisualLogger.h"
+#include "GameFramework/Controller.h"
 
 
 UEnvQueryInstanceBlueprintWrapper* UCMEnvQueryManager::CMRunEQSQuery(

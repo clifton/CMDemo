@@ -1,0 +1,224 @@
+Name:           agones-allocator-5556c688fc-dkmqz
+Namespace:      agones-system
+Priority:       0
+Node:           gke-dedicated-agones-system-pool-476b5c69-4810/10.142.0.12
+Start Time:     Thu, 09 Jan 2020 20:59:31 -0500
+Labels:         app=agones
+                heritage=Helm
+                multicluster.agones.dev/role=allocator
+                pod-template-hash=5556c688fc
+                release=cm-release
+Annotations:    prometheus.io/path: /metrics
+                prometheus.io/port: 8080
+                prometheus.io/scrape: true
+Status:         Running
+IP:             10.60.3.10
+IPs:            <none>
+Controlled By:  ReplicaSet/agones-allocator-5556c688fc
+Containers:
+  agones-allocator:
+    Container ID:   docker://efd6e12a7180973992c388488ea1649366bd33f3f1ff7ed99406f627a3de97ab
+    Image:          gcr.io/agones-images/agones-allocator:1.2.0
+    Image ID:       docker-pullable://gcr.io/agones-images/agones-allocator@sha256:80552927b6cf92262b7c584ce9468528da543036595836983fa52ef426c07e5c
+    Port:           8443/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Thu, 09 Jan 2020 21:00:16 -0500
+    Ready:          True
+    Restart Count:  0
+    Liveness:       http-get http://:8080/live delay=3s timeout=1s period=3s #success=1 #failure=3
+    Readiness:      http-get http://:8080/ready delay=0s timeout=1s period=10s #success=1 #failure=3
+    Environment:
+      PROMETHEUS_EXPORTER:   true
+      STACKDRIVER_EXPORTER:  false
+      GCP_PROJECT_ID:        
+    Mounts:
+      /home/allocator/client-ca from client-ca (ro)
+      /home/allocator/tls from tls (ro)
+      /var/run/secrets/kubernetes.io/serviceaccount from agones-allocator-token-t2kj8 (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  tls:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  allocator-tls
+    Optional:    false
+  client-ca:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  allocator-client-ca
+    Optional:    false
+  agones-allocator-token-t2kj8:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  agones-allocator-token-t2kj8
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     agones.dev/agones-system=true:NoExecute
+                 node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age                    From                                                     Message
+  ----     ------            ----                   ----                                                     -------
+  Warning  FailedScheduling  16m (x9 over 18m)      default-scheduler                                        0/1 nodes are available: 1 node(s) were unschedulable.
+  Warning  FailedScheduling  9m11s (x7 over 16m)    default-scheduler                                        no nodes available to schedule pods
+  Warning  FailedScheduling  8m32s (x3 over 8m36s)  default-scheduler                                        0/1 nodes are available: 1 node(s) had taints that the pod didn't tolerate.
+  Normal   Scheduled         8m24s                  default-scheduler                                        Successfully assigned agones-system/agones-allocator-5556c688fc-dkmqz to gke-dedicated-agones-system-pool-476b5c69-4810
+  Normal   Pulling           8m18s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Pulling image "gcr.io/agones-images/agones-allocator:1.2.0"
+  Normal   Pulled            7m40s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Successfully pulled image "gcr.io/agones-images/agones-allocator:1.2.0"
+  Normal   Created           7m39s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Created container agones-allocator
+  Normal   Started           7m38s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Started container agones-allocator
+
+
+Name:                 agones-controller-74fd4ff4df-b7ml6
+Namespace:            agones-system
+Priority:             1000000
+Priority Class Name:  agones-system
+Node:                 gke-dedicated-agones-system-pool-476b5c69-4810/10.142.0.12
+Start Time:           Thu, 09 Jan 2020 20:59:40 -0500
+Labels:               agones.dev/role=controller
+                      app=agones
+                      heritage=Helm
+                      pod-template-hash=74fd4ff4df
+                      release=cm-release
+Annotations:          cluster-autoscaler.kubernetes.io/safe-to-evict: false
+                      prometheus.io/path: /metrics
+                      prometheus.io/port: 8080
+                      prometheus.io/scrape: true
+                      revision/tls-cert: 3
+Status:               Running
+IP:                   10.60.3.13
+IPs:                  <none>
+Controlled By:        ReplicaSet/agones-controller-74fd4ff4df
+Containers:
+  agones-controller:
+    Container ID:   docker://cda3210d5ea82b7ea812a6dd3cce543975578eb006626c2ac79fc236335071d5
+    Image:          gcr.io/agones-images/agones-controller:1.2.0
+    Image ID:       docker-pullable://gcr.io/agones-images/agones-controller@sha256:26117de6c3d409878e5f3217c07ce7afa2f56598b1c1a607e0f9f52b0de7e4be
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Thu, 09 Jan 2020 21:00:19 -0500
+    Ready:          True
+    Restart Count:  0
+    Liveness:       http-get http://:8080/live delay=3s timeout=1s period=3s #success=1 #failure=3
+    Environment:
+      MIN_PORT:              7000
+      MAX_PORT:              8000
+      SIDECAR_IMAGE:         gcr.io/agones-images/agones-sdk:1.2.0
+      ALWAYS_PULL_SIDECAR:   false
+      SIDECAR_CPU_REQUEST:   30m
+      SDK_SERVICE_ACCOUNT:   agones-sdk
+      PROMETHEUS_EXPORTER:   true
+      STACKDRIVER_EXPORTER:  false
+      GCP_PROJECT_ID:        
+      SIDECAR_CPU_LIMIT:     0
+      NUM_WORKERS:           4
+      API_SERVER_QPS:        400
+      API_SERVER_QPS_BURST:  500
+      LOG_DIR:               /home/agones/logs
+      LOG_SIZE_LIMIT_MB:     10000
+    Mounts:
+      /home/agones/certs from certs (ro)
+      /home/agones/logs from logs (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from agones-controller-token-lfgwj (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  certs:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  cm-release-agones-cert
+    Optional:    false
+  logs:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+  agones-controller-token-lfgwj:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  agones-controller-token-lfgwj
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  type=agones-system-node
+Tolerations:     agones.dev/agones-system=true:NoExecute
+                 node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age                    From                                                     Message
+  ----     ------            ----                   ----                                                     -------
+  Warning  FailedScheduling  16m (x10 over 18m)     default-scheduler                                        0/1 nodes are available: 1 node(s) were unschedulable.
+  Warning  FailedScheduling  9m11s (x7 over 16m)    default-scheduler                                        no nodes available to schedule pods
+  Warning  FailedScheduling  8m24s (x5 over 8m37s)  default-scheduler                                        0/1 nodes are available: 1 node(s) had taints that the pod didn't tolerate.
+  Normal   Scheduled         8m15s                  default-scheduler                                        Successfully assigned agones-system/agones-controller-74fd4ff4df-b7ml6 to gke-dedicated-agones-system-pool-476b5c69-4810
+  Normal   Pulling           8m12s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Pulling image "gcr.io/agones-images/agones-controller:1.2.0"
+  Normal   Pulled            7m37s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Successfully pulled image "gcr.io/agones-images/agones-controller:1.2.0"
+  Normal   Created           7m36s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Created container agones-controller
+  Normal   Started           7m36s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Started container agones-controller
+
+
+Name:                 agones-ping-8c486567-l8flr
+Namespace:            agones-system
+Priority:             1000000
+Priority Class Name:  agones-system
+Node:                 gke-dedicated-agones-system-pool-476b5c69-4810/10.142.0.12
+Start Time:           Thu, 09 Jan 2020 20:59:40 -0500
+Labels:               agones.dev/role=ping
+                      app=agones
+                      heritage=Helm
+                      pod-template-hash=8c486567
+                      release=cm-release
+Annotations:          <none>
+Status:               Running
+IP:                   10.60.3.14
+IPs:                  <none>
+Controlled By:        ReplicaSet/agones-ping-8c486567
+Containers:
+  agones-ping:
+    Container ID:   docker://68110eba0555995a6d1fe94806bf698236dee114f98179f4284dac17289ef2e7
+    Image:          gcr.io/agones-images/agones-ping:1.2.0
+    Image ID:       docker-pullable://gcr.io/agones-images/agones-ping@sha256:e01d045057cfd9ba1d7b6af2eb5b5c5b3df1a034c8f1bbee2752657b2246ae40
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Thu, 09 Jan 2020 21:00:21 -0500
+    Ready:          True
+    Restart Count:  0
+    Liveness:       http-get http://:8080/live delay=3s timeout=1s period=3s #success=1 #failure=3
+    Environment:
+      HTTP_RESPONSE:   ok
+      UDP_RATE_LIMIT:  20
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-cjm74 (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  default-token-cjm74:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-cjm74
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  type=agones-system-node
+Tolerations:     agones.dev/agones-system=true:NoExecute
+                 node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age                    From                                                     Message
+  ----     ------            ----                   ----                                                     -------
+  Warning  FailedScheduling  16m (x10 over 18m)     default-scheduler                                        0/1 nodes are available: 1 node(s) were unschedulable.
+  Warning  FailedScheduling  9m11s (x7 over 16m)    default-scheduler                                        no nodes available to schedule pods
+  Warning  FailedScheduling  8m24s (x5 over 8m37s)  default-scheduler                                        0/1 nodes are available: 1 node(s) had taints that the pod didn't tolerate.
+  Normal   Scheduled         8m15s                  default-scheduler                                        Successfully assigned agones-system/agones-ping-8c486567-l8flr to gke-dedicated-agones-system-pool-476b5c69-4810
+  Normal   Pulling           8m12s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Pulling image "gcr.io/agones-images/agones-ping:1.2.0"
+  Normal   Pulled            7m35s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Successfully pulled image "gcr.io/agones-images/agones-ping:1.2.0"
+  Normal   Created           7m35s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Created container agones-ping
+  Normal   Started           7m34s                  kubelet, gke-dedicated-agones-system-pool-476b5c69-4810  Started container agones-ping

@@ -79,3 +79,13 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Published versions
+Publish/*
+
+# Logs
+*.log
+
+# Docker
+.env
+Docker/LinuxServer
