@@ -7,7 +7,7 @@ public class CrimsonMirror : ModuleRules
 	public CrimsonMirror(ReadOnlyTargetRules Target) : base(Target)
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        bFasterWithoutUnity = true;
+        bUseUnity = false;
 	
         PublicDependencyModuleNames.AddRange(
             new string[] {
