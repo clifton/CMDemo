@@ -82,20 +82,20 @@ void ACMPlayerCharacter::Tick(float DeltaTime)
 	if (GetLocalRole() >= ROLE_AutonomousProxy)
 	{
 		// is this worth it?
-		CharacterAcceleration = GetCharacterMovement()->GetCurrentAcceleration();
-		CharacterAimRotation = GetControlRotation();
-
-		if (CharacterAcceleration.Size() > 0)
-		{
-			float InterpSpeed = 8.f;
-			const FRotator CharacterRotation = GetActorRotation();
-			FRotator CurrentYaw = FRotator(0.f, CharacterRotation.Yaw, 0.f);
-			FRotator DesiredYaw = GetDesiredRotation();
-			FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);
-			RotateTo.Pitch = CharacterRotation.Pitch;
-			RotateTo.Roll = CharacterRotation.Roll;
-			SetActorRotation(RotateTo);
-		}
+// 		CharacterAcceleration = GetCharacterMovement()->GetCurrentAcceleration();
+// 		CharacterAimRotation = GetControlRotation();
+// 
+// 		if (CharacterAcceleration.Size() > 0)
+// 		{
+// 			float InterpSpeed = 8.f;
+// 			const FRotator CharacterRotation = GetActorRotation();
+// 			FRotator CurrentYaw = FRotator(0.f, CharacterRotation.Yaw, 0.f);
+// 			FRotator DesiredYaw = GetDesiredRotation();
+// 			FRotator RotateTo = FMath::RInterpTo(CurrentYaw, DesiredYaw, DeltaTime, InterpSpeed);
+// 			RotateTo.Pitch = CharacterRotation.Pitch;
+// 			RotateTo.Roll = CharacterRotation.Roll;
+// 			SetActorRotation(RotateTo);
+// 		}
 	}
 }
 
@@ -123,13 +123,7 @@ void ACMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
- 	PlayerInputComponent->BindAxis("MoveForward", this, &ACMPlayerCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ACMPlayerCharacter::MoveRight);
-
-	PlayerInputComponent->BindAxis("LookUp", this, &ACMPlayerCharacter::LookUp);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ACMPlayerCharacter::LookUpRate);
-	PlayerInputComponent->BindAxis("Turn", this, &ACMPlayerCharacter::Turn);
-	PlayerInputComponent->BindAxis("TurnRate", this, &ACMPlayerCharacter::TurnRate);
+	// Movement / aiming input binds moved to BP_PlayerCharacter
 
 	PlayerInputComponent->BindAction("Target", IE_Pressed, this, &ACMPlayerCharacter::GetNewTarget);
 
@@ -254,50 +248,6 @@ void ACMPlayerCharacter::BeginPlay()
 
 	StartingCameraBoomArmLength = CameraBoom->TargetArmLength;
 	StartingCameraBoomLocation = FollowCamera->GetRelativeTransform().GetLocation();
-}
-
-void ACMPlayerCharacter::LookUp(float Value)
-{
-	if (IsAlive())
-	{
-		AddControllerPitchInput(Value);
-	}
-}
-
-void ACMPlayerCharacter::LookUpRate(float Value)
-{
-	if (IsAlive())
-	{
-		AddControllerPitchInput(Value * BaseLookUpRate * GetWorld()->DeltaTimeSeconds);
-	}
-}
-
-void ACMPlayerCharacter::Turn(float Value)
-{
-	if (IsAlive())
-	{
-		AddControllerYawInput(Value);
-	}
-}
-
-void ACMPlayerCharacter::TurnRate(float Value)
-{
-	if (IsAlive())
-	{
-		AddControllerYawInput(Value * BaseTurnRate * GetWorld()->DeltaTimeSeconds);
-	}
-}
-
-void ACMPlayerCharacter::MoveForward(float Velocity)
-{
-	FVector TargetForwardVector = UKismetMathLibrary::GetForwardVector(GetDesiredRotation());
-	AddMovementInput(TargetForwardVector * Velocity);
-}
-
-void ACMPlayerCharacter::MoveRight(float Velocity)
-{
-	FVector TargetRightVector = UKismetMathLibrary::GetRightVector(GetDesiredRotation());
-	AddMovementInput(TargetRightVector * Velocity);
 }
 
 // Client only
